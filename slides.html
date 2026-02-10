@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>We Are Marketable - Automatisation n8n</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      overflow: hidden;
+      cursor: default;
+      user-select: none;
+    }
+
+    /* Slides container */
+    .slides {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .slide.active {
+      display: flex;
+    }
+
+    /* Click zones */
+    .click-left,
+    .click-right {
+      position: fixed;
+      top: 0;
+      width: 15%;
+      height: 100%;
+      z-index: 100;
+      cursor: pointer;
+    }
+
+    .click-left {
+      left: 0;
+    }
+
+    .click-right {
+      right: 0;
+    }
+
+    /* Dots */
+    .dots {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 12px;
+      z-index: 200;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.35);
+      border: 2px solid rgba(255, 255, 255, 0.5);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .dot.active {
+      background: #fff;
+      border-color: #fff;
+    }
+
+    /* Dots on light backgrounds */
+    .dots.dark-dots .dot {
+      background: rgba(1, 22, 56, 0.2);
+      border-color: rgba(1, 22, 56, 0.4);
+    }
+
+    .dots.dark-dots .dot.active {
+      background: #011638;
+      border-color: #011638;
+    }
+
+    /* ===== SLIDE 1 - Chiffre Choc ===== */
+    .slide-1 {
+      background: #011638;
+      color: #fff;
+      text-align: center;
+      padding: 40px;
+    }
+
+    .slide-1 .tag {
+      display: inline-block;
+      background: rgba(157, 79, 158, 0.25);
+      color: #c98fca;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      padding: 8px 24px;
+      border-radius: 30px;
+      margin-bottom: 40px;
+    }
+
+    .slide-1 .big-number {
+      font-size: clamp(80px, 12vw, 160px);
+      font-weight: 900;
+      line-height: 1;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #fff 0%, #c98fca 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .slide-1 .big-label {
+      font-size: clamp(20px, 3vw, 36px);
+      font-weight: 300;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 48px;
+    }
+
+    .slide-1 .subtitle {
+      font-size: clamp(16px, 2vw, 22px);
+      font-weight: 400;
+      color: rgba(255, 255, 255, 0.55);
+      max-width: 700px;
+      line-height: 1.6;
+    }
+
+    /* ===== SLIDE 2 - Profil Agence ===== */
+    .slide-2 {
+      background: #EEF0F2;
+      color: #011638;
+      padding: 40px;
+    }
+
+    .slide-2 .card {
+      background: #fff;
+      border-radius: 24px;
+      padding: 56px 64px;
+      max-width: 720px;
+      width: 90%;
+      box-shadow: 0 4px 24px rgba(1, 22, 56, 0.07);
+    }
+
+    .slide-2 .card-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 36px;
+    }
+
+    .slide-2 .card-logo {
+      width: 56px;
+      height: 56px;
+      background: #011638;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+
+    .slide-2 .card-title {
+      font-size: 28px;
+      font-weight: 800;
+    }
+
+    .slide-2 .card-subtitle {
+      font-size: 15px;
+      color: #9D4F9E;
+      font-weight: 600;
+    }
+
+    .slide-2 .info-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .slide-2 .info-list li {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 18px;
+      line-height: 1.4;
+    }
+
+    .slide-2 .info-list .emoji {
+      font-size: 24px;
+      width: 36px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .slide-2 .info-list .label {
+      color: rgba(1, 22, 56, 0.5);
+      font-weight: 500;
+      min-width: 120px;
+    }
+
+    .slide-2 .info-list .value {
+      font-weight: 600;
+    }
+
+    /* ===== SLIDE 3 - Avant / Apres ===== */
+    .slide-3 {
+      flex-direction: row !important;
+      position: relative;
+    }
+
+    .slide-3 .col {
+      flex: 1;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 60px 80px;
+    }
+
+    .slide-3 .col-before {
+      background: #011638;
+      color: #fff;
+      align-items: flex-end;
+      text-align: right;
+    }
+
+    .slide-3 .col-after {
+      background: #fff;
+      color: #011638;
+      align-items: flex-start;
+      text-align: left;
+    }
+
+    .slide-3 .col-title {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 40px;
+    }
+
+    .slide-3 .col-before .col-title {
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    .slide-3 .col-after .col-title {
+      color: #9D4F9E;
+    }
+
+    .slide-3 .col .items {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      max-width: 400px;
+    }
+
+    .slide-3 .item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      font-size: 17px;
+      line-height: 1.5;
+    }
+
+    .slide-3 .col-before .item {
+      justify-content: flex-end;
+      flex-direction: row-reverse;
+    }
+
+    .slide-3 .item-icon {
+      font-size: 22px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .slide-3 .col-before .item-text {
+      color: rgba(255, 255, 255, 0.75);
+    }
+
+    .slide-3 .col-after .item-text {
+      color: #011638;
+      font-weight: 500;
+    }
+
+    .slide-3 .badge {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #9D4F9E;
+      color: #fff;
+      padding: 16px 28px;
+      border-radius: 50px;
+      font-size: 18px;
+      font-weight: 800;
+      z-index: 10;
+      box-shadow: 0 8px 32px rgba(157, 79, 158, 0.4);
+      white-space: nowrap;
+    }
+
+    /* ===== SLIDE 4 - Workflow ===== */
+    .slide-4 {
+      background: #EEF0F2;
+      color: #011638;
+      padding: 40px;
+      gap: 48px;
+    }
+
+    .slide-4 .slide-title {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #9D4F9E;
+    }
+
+    .slide-4 .flow {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      max-width: 1100px;
+      width: 90%;
+    }
+
+    .slide-4 .step {
+      flex: 1;
+      border-radius: 20px;
+      padding: 36px 28px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .slide-4 .step-1 {
+      background: #011638;
+      color: #fff;
+    }
+
+    .slide-4 .step-2 {
+      background: #9D4F9E;
+      color: #fff;
+    }
+
+    .slide-4 .step-3 {
+      background: #fff;
+      color: #011638;
+      box-shadow: 0 4px 20px rgba(1, 22, 56, 0.08);
+    }
+
+    .slide-4 .step-num {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      opacity: 0.5;
+    }
+
+    .slide-4 .step-icon {
+      font-size: 36px;
+    }
+
+    .slide-4 .step-title {
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .slide-4 .step-desc {
+      font-size: 14px;
+      line-height: 1.5;
+      opacity: 0.7;
+      max-width: 220px;
+    }
+
+    .slide-4 .arrow {
+      font-size: 28px;
+      color: rgba(1, 22, 56, 0.25);
+      flex-shrink: 0;
+      padding: 0 16px;
+    }
+
+    .slide-4 .flow-label {
+      font-size: 15px;
+      color: rgba(1, 22, 56, 0.45);
+      font-weight: 500;
+      max-width: 700px;
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    /* ===== SLIDE 5 - ROI ===== */
+    .slide-5 {
+      background: #011638;
+      color: #fff;
+      padding: 40px;
+      gap: 32px;
+    }
+
+    .slide-5 .slide-title {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    .slide-5 .roi-blocks {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      max-width: 700px;
+      width: 90%;
+    }
+
+    .slide-5 .roi-block {
+      border-radius: 20px;
+      padding: 36px 40px;
+      text-align: center;
+    }
+
+    .slide-5 .roi-purple {
+      background: #9D4F9E;
+    }
+
+    .slide-5 .roi-light {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .slide-5 .roi-number {
+      font-size: clamp(36px, 5vw, 56px);
+      font-weight: 900;
+      line-height: 1.1;
+    }
+
+    .slide-5 .roi-label {
+      font-size: 17px;
+      font-weight: 400;
+      opacity: 0.75;
+      margin-top: 8px;
+    }
+
+    .slide-5 .conclusion {
+      font-size: clamp(16px, 2vw, 20px);
+      color: rgba(255, 255, 255, 0.5);
+      text-align: center;
+      max-width: 600px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Click Zones -->
+  <div class="click-left" onclick="prev()"></div>
+  <div class="click-right" onclick="next()"></div>
+
+  <!-- Dots -->
+  <div class="dots" id="dots"></div>
+
+  <div class="slides">
+
+    <!-- SLIDE 1 : Chiffre Choc -->
+    <div class="slide slide-1 active" data-dots="light">
+      <div class="tag">Cas client</div>
+      <div class="big-number">75h/mois</div>
+      <div class="big-label">perdues en reporting manuel</div>
+      <div class="subtitle">Comment une agence marketing a automatise son reporting client et recupere 45 heures par
+        mois avec n8n</div>
+    </div>
+
+    <!-- SLIDE 2 : Profil Agence -->
+    <div class="slide slide-2" data-dots="dark">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-logo">&#x1F680;</div>
+          <div>
+            <div class="card-title">We Are Marketable</div>
+            <div class="card-subtitle">Agence Marketing Digital</div>
+          </div>
+        </div>
+        <ul class="info-list">
+          <li>
+            <span class="emoji">&#x1F465;</span>
+            <span class="label">Equipe</span>
+            <span class="value">4 personnes (+4 Freelances)</span>
+          </li>
+          <li>
+            <span class="emoji">&#x1F4BC;</span>
+            <span class="label">Clients</span>
+            <span class="value">30 clients actifs</span>
+          </li>
+          <li>
+            <span class="emoji">&#x1F4CA;</span>
+            <span class="label">Probleme</span>
+            <span class="value">Reporting manuel sur Google Sheets, copier-coller entre 6 plateformes</span>
+          </li>
+          <li>
+            <span class="emoji">&#x23F0;</span>
+            <span class="label">Temps perdu</span>
+            <span class="value">75h/mois</span>
+          </li>
+          <li>
+            <span class="emoji">&#x1F62E;</span>
+            <span class="label">Risque</span>
+            <span class="value">Erreurs de copie, retards clients, equipe frustree</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- SLIDE 3 : Avant / Apres -->
+    <div class="slide slide-3" data-dots="light">
+      <div class="col col-before">
+        <div class="col-title">&#x274C;&ensp;Avant</div>
+        <div class="items">
+          <div class="item">
+            <span class="item-icon">&#x1F4CB;</span>
+            <span class="item-text">Copier-coller depuis 6 plateformes differentes</span>
+          </div>
+          <div class="item">
+            <span class="item-icon">&#x23F3;</span>
+            <span class="item-text">75h/mois de travail repetitif</span>
+          </div>
+          <div class="item">
+            <span class="item-icon">&#x26A0;&#xFE0F;</span>
+            <span class="item-text">Erreurs frequentes dans les chiffres</span>
+          </div>
+          <div class="item">
+            <span class="item-icon">&#x1F614;</span>
+            <span class="item-text">Equipe demotivee par les taches repetitives</span>
+          </div>
+        </div>
+      </div>
+      <div class="badge">&#x2212;45h recuperees</div>
+      <div class="col col-after">
+        <div class="col-title">&#x2705;&ensp;Apres</div>
+        <div class="items">
+          <div class="item">
+            <span class="item-icon">&#x26A1;</span>
+            <span class="item-text">Collecte automatique multi-plateformes</span>
+          </div>
+          <div class="item">
+            <span class="item-icon">&#x1F552;</span>
+            <span class="item-text">30h/mois seulement (supervision)</span>
+          </div>
+          <div class="item">
+            <span class="item-icon">&#x2705;</span>
+            <span class="item-text">Zero erreur de saisie</span>
+          </div>
+          <div class="item">
+            <span class="item-icon">&#x1F4AA;</span>
+            <span class="item-text">Equipe focalisee sur la strategie</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4 : Workflow -->
+    <div class="slide slide-4" data-dots="dark">
+      <div class="slide-title">Workflow automatise avec n8n</div>
+      <div class="flow">
+        <div class="step step-1">
+          <div class="step-num">Etape 1</div>
+          <div class="step-icon">&#x1F4E5;</div>
+          <div class="step-title">Collecte</div>
+          <div class="step-desc">Google Ads, Meta Ads, Analytics, Search Console via API</div>
+        </div>
+        <div class="arrow">&#x27A1;&#xFE0F;</div>
+        <div class="step step-2">
+          <div class="step-num">Etape 2</div>
+          <div class="step-icon">&#x2699;&#xFE0F;</div>
+          <div class="step-title">Traitement</div>
+          <div class="step-desc">Calcul KPIs, agregation, mise en forme automatique</div>
+        </div>
+        <div class="arrow">&#x27A1;&#xFE0F;</div>
+        <div class="step step-3">
+          <div class="step-num">Etape 3</div>
+          <div class="step-icon">&#x1F4E8;</div>
+          <div class="step-title">Diffusion</div>
+          <div class="step-desc">Rapport email HTML + notification Slack au client</div>
+        </div>
+      </div>
+      <div class="flow-label">Declenchement automatique chaque lundi a 9h &mdash; aucune intervention humaine requise
+      </div>
+    </div>
+
+    <!-- SLIDE 5 : ROI -->
+    <div class="slide slide-5" data-dots="light">
+      <div class="slide-title">Retour sur investissement</div>
+      <div class="roi-blocks">
+        <div class="roi-block roi-purple">
+          <div class="roi-number">45h/mois economisees</div>
+          <div class="roi-label">Soit plus de 2 semaines de travail recuperees chaque mois</div>
+        </div>
+        <div class="roi-block roi-light">
+          <div class="roi-number">3600 &euro;/mois</div>
+          <div class="roi-label">Sur un taux horaire conservateur à 80 &euro;/h</div>
+        </div>
+      </div>
+      <div class="conclusion">Mise en place en 2 semaines &mdash; rentabilise des le premier mois.<br>L'equipe se
+        concentre desormais sur ce qui compte : la strategie client.</div>
+    </div>
+
+  </div>
+
+  <script>
+    let current = 0;
+    const slides = document.querySelectorAll('.slide');
+    const total = slides.length;
+    const dotsContainer = document.getElementById('dots');
+
+    // Create dots
+    for (let i = 0; i < total; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'dot' + (i === 0 ? ' active' : '');
+      dot.onclick = () => goTo(i);
+      dotsContainer.appendChild(dot);
+    }
+
+    function goTo(n) {
+      if (n < 0 || n >= total) return;
+      slides[current].classList.remove('active');
+      dotsContainer.children[current].classList.remove('active');
+      current = n;
+      slides[current].classList.add('active');
+      dotsContainer.children[current].classList.add('active');
+      // Update dot colors based on slide background
+      const dotStyle = slides[current].dataset.dots;
+      dotsContainer.className = 'dots' + (dotStyle === 'dark' ? ' dark-dots' : '');
+    }
+
+    function next() { goTo(current + 1); }
+    function prev() { goTo(current - 1); }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') next();
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') prev();
+    });
+  </script>
+
+</body>
+
+</html>

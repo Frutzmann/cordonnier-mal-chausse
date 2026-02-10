@@ -1,0 +1,13 @@
+Numero,Client,Projet,Montant HT (EUR),TVA (%),Montant TTC (EUR),Date emission,Date echeance,Statut paiement,Date paiement,Date derniere relance
+FAC-2025-008,LegalStart Pro,Refonte architecture SEO,4500,20,5400,2025-12-16,2026-01-15,Payée,2026-01-10,
+FAC-2025-009,MaisonBio.fr,Stratégie SEO 2026,2000,20,2400,2025-12-21,2026-01-20,Payée,2026-01-18,
+FAC-2025-010,Comptoir des Saveurs,Audit SEO local + GMB,1800,20,2160,2025-11-01,2025-12-01,Payée,2025-11-28,
+FAC-2025-011,FitCoach App,SEO app mobile + blog,1500,20,1800,2026-01-02,2026-02-01,Payée,2026-01-29,
+FAC-2026-001,TechnoVert SAS,Audit SEO technique Q1,2500,20,3000,2026-01-25,2026-02-24,En attente,,
+FAC-2026-002,LegalStart Pro,Campagne Google Ads juridique,5000,20,6000,2026-01-16,2026-02-15,En attente,,
+FAC-2025-006,Comptoir des Saveurs,Forfait mensuel décembre,2500,20,3000,2025-12-01,2025-12-31,En attente,,
+FAC-2025-007,MaisonBio.fr,Forfait mensuel décembre,2000,20,2400,2025-12-15,2026-01-14,En attente,,
+FAC-2025-004,TechnoVert SAS,Forfait mensuel novembre,3000,20,3600,2025-11-30,2025-12-30,Relance 1,,2026-01-15
+FAC-2025-003,FitCoach App,Forfait mensuel octobre,1500,20,1800,2025-10-31,2025-11-30,Relance 2,,2026-01-05
+FAC-2025-002,TechnoVert SAS,Forfait mensuel septembre,3000,20,3600,2025-09-30,2025-10-30,Payée,2025-11-22,2025-11-10
+FAC-2025-001,Comptoir des Saveurs,Forfait mensuel septembre,2500,20,3000,2025-09-30,2025-10-30,Payée,2025-10-28,

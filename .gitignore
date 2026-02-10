@@ -1,0 +1,14 @@
+# Secrets & credentials
+.mcp.json
+
+# Claude Code
+.claude/
+
+# OS files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Office temp files
+~$*.docx
+~$*.xlsx

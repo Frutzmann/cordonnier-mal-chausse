@@ -1,0 +1,37 @@
+Niveau relance,Delai declencheur (jours),Objet email,Corps email
+Relance 1,30,Petite relance — Facture {numero},"Salut {contact},
+
+J'espère que tout roule de ton côté !
+
+Petit message rapide : la facture {numero} de {montant_ttc}€ datée du {date_emission} arrive à échéance (ou l'a légèrement dépassée).
+
+C'est sûrement un oubli, ça arrive à tout le monde. Tu peux me faire le virement quand tu as 2 minutes ?
+
+Si c'est déjà fait, ignore ce message et désolé pour le spam 😄
+
+À bientôt,
+Guillaume"
+Relance 2,45,Relance facture {numero} — En attente depuis {jours_retard} jours,"Bonjour {contact},
+
+Je reviens vers toi concernant la facture {numero} d'un montant de {montant_ttc}€, émise le {date_emission}.
+
+Le paiement a maintenant {jours_retard} jours de retard. Je comprends que des imprévus peuvent arriver, mais j'ai besoin de visibilité sur le règlement.
+
+Est-ce que tu peux me confirmer une date de paiement cette semaine ?
+
+Si tu rencontres un souci, n'hésite pas à m'en parler directement — on trouvera une solution.
+
+Merci,
+Guillaume"
+Relance 3,60,URGENT — Facture {numero} impayée depuis {jours_retard} jours,"Bonjour {contact},
+
+Malgré mes précédentes relances, la facture {numero} de {montant_ttc}€ reste impayée depuis {jours_retard} jours.
+
+Je suis dans l'obligation de te demander un règlement sous 7 jours ouvrés.
+
+Sans retour de ta part, je serai contraint d'engager une procédure de recouvrement, ce que je préférerais évidemment éviter.
+
+Merci de me contacter au plus vite pour régulariser la situation.
+
+Cordialement,
+Guillaume — Agence SEO"
