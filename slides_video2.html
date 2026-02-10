@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vidéo #2 — Le Back-Office Qui Coûte 125 000€</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;700&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --purple: #9D4F9E;
+      --purple-light: rgba(157, 79, 158, 0.15);
+      --purple-glow: rgba(157, 79, 158, 0.3);
+      --light: #EEF0F2;
+      --navy: #011638;
+      --navy-mid: #0a2a5c;
+      --navy-light: #132d54;
+      --navy-card: #081e42;
+      --red: #E53935;
+      --red-bg: rgba(229, 57, 53, 0.08);
+      --green: #43A047;
+      --green-bg: rgba(67, 160, 71, 0.08);
+      --gold: #FFB300;
+      --blue: #1E88E5;
+      --grey: #9aabbb;
+      --white: #ffffff;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--navy);
+      color: var(--light);
+      font-family: 'DM Sans', sans-serif;
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+      cursor: none;
+      user-select: none;
+    }
+
+    /* ── Slide Container ── */
+    .deck {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 5vh 6vw;
+      opacity: 0;
+      transform: translateX(40px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .slide.active {
+      opacity: 1;
+      transform: translateX(0);
+      pointer-events: auto;
+    }
+
+    .slide.exit-left {
+      opacity: 0;
+      transform: translateX(-40px);
+    }
+
+    /* ── Top accent bar ── */
+    .slide::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--purple);
+    }
+
+    /* Hide purple accent bar on slide 4 (split has its own red/green bars) */
+    .slide.no-accent::before {
+      display: none;
+    }
+
+    /* ── Noise texture overlay ── */
+    .slide::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .slide>* {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── Typography ── */
+    .label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: clamp(0.6rem, 1vw, 0.8rem);
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--purple);
+      font-weight: 700;
+      margin-bottom: 2vh;
+    }
+
+    .hero-text {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      line-height: 1.1;
+      margin-bottom: 1.5vh;
+    }
+
+    .hero-text .accent {
+      color: var(--purple);
+    }
+
+    .subtitle {
+      font-size: clamp(0.9rem, 1.5vw, 1.2rem);
+      color: var(--grey);
+      font-style: italic;
+      margin-bottom: 3vh;
+    }
+
+    h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      margin-bottom: 2vh;
+    }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--navy-card);
+      border: 1px solid rgba(157, 79, 158, 0.12);
+      border-radius: 8px;
+      padding: 1.8vw 2vw;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .card:hover {
+      transform: scale(1.02);
+      box-shadow: 0 4px 20px rgba(157, 79, 158, 0.15);
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      border-radius: 8px 0 0 8px;
+    }
+
+    .card.purple::before {
+      background: var(--purple);
+    }
+
+    .card.green::before {
+      background: var(--green);
+    }
+
+    .card.gold::before {
+      background: var(--gold);
+    }
+
+    .card.red::before {
+      background: var(--red);
+    }
+
+    .card.blue::before {
+      background: var(--blue);
+    }
+
+    /* ── Grid layouts ── */
+    .grid-2x2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5vw;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1.5vw;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    /* ── Tool icons grid (Slide 1) ── */
+    .tools-container {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2vw;
+      max-width: 280px;
+    }
+
+    .tool-box {
+      background: var(--navy-card);
+      border: 1px solid rgba(157, 79, 158, 0.15);
+      border-radius: 8px;
+      padding: 1.2rem 1rem;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--grey);
+      position: relative;
+    }
+
+    .tool-box .icon {
+      font-size: 2.2rem;
+      margin-bottom: 0.4rem;
+      opacity: 0.7;
+    }
+
+    /* Dashed broken connections between tool boxes */
+    .tools-container::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 10%;
+      right: 10%;
+      height: 2px;
+      background: repeating-linear-gradient(90deg, var(--red) 0, var(--red) 6px, transparent 6px, transparent 12px);
+      opacity: 0.5;
+      z-index: 2;
+    }
+
+    .tools-container::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 10%;
+      bottom: 10%;
+      width: 2px;
+      background: repeating-linear-gradient(180deg, var(--red) 0, var(--red) 6px, transparent 6px, transparent 12px);
+      opacity: 0.5;
+      z-index: 2;
+    }
+
+    .tools-x-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2.4rem;
+      color: var(--red);
+      font-weight: 700;
+      z-index: 3;
+      background: var(--navy);
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid rgba(229, 57, 53, 0.4);
+      text-shadow: 0 0 12px rgba(229, 57, 53, 0.5);
+    }
+
+    /* Glitch flicker on the X */
+    @keyframes glitchFlicker {
+
+      0%,
+      90%,
+      100% {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+      }
+
+      92% {
+        opacity: 0.7;
+        transform: translate(-48%, -52%);
+      }
+
+      94% {
+        opacity: 1;
+        transform: translate(-52%, -49%);
+      }
+
+      96% {
+        opacity: 0.8;
+        transform: translate(-50%, -50%);
+      }
+    }
+
+    .slide.active .tools-x-overlay {
+      animation: glitchFlicker 3s ease infinite;
+    }
+
+    /* ── Slide 1 layout ── */
+    .s1-layout {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 4vw;
+    }
+
+    /* ── Profile card (Slide 2) ── */
+    .profile-card {
+      background: linear-gradient(135deg, #ffffff 0%, #f8f6fa 100%);
+      border-radius: 12px;
+      padding: 3vw 3.5vw;
+      color: var(--navy);
+      max-width: 750px;
+      border-left: 5px solid var(--purple);
+      box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .profile-header {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      margin-bottom: 0.3vh;
+    }
+
+    .profile-avatar {
+      width: 52px;
+      height: 52px;
+      background: var(--navy);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 24px;
+      color: var(--purple);
+      flex-shrink: 0;
+    }
+
+    .profile-card h2 {
+      color: var(--navy);
+      margin-bottom: 0;
+    }
+
+    .profile-card .sub {
+      color: var(--grey);
+      font-style: italic;
+      margin-bottom: 2vh;
+      font-size: clamp(0.85rem, 1.2vw, 1.1rem);
+    }
+
+    .profile-card .separator {
+      border: none;
+      border-top: 1px solid #ddd;
+      margin: 1.5vh 0;
+    }
+
+    .profile-row {
+      display: flex;
+      gap: 2vw;
+      padding: 0.5vh 0;
+      font-size: clamp(0.8rem, 1.1vw, 1rem);
+    }
+
+    .profile-row .key {
+      color: var(--grey);
+      font-weight: 700;
+      min-width: 140px;
+      font-size: 0.85em;
+    }
+
+    .profile-row .val {
+      color: var(--navy);
+    }
+
+    /* ── Chantier cards (Slide 3) ── */
+    .chantier-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 1.2vw;
+      padding: 0.4vw;
+    }
+
+    .chantier-icon {
+      font-size: clamp(1.5rem, 2.5vw, 2.2rem);
+      flex-shrink: 0;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      background: rgba(157, 79, 158, 0.1);
+    }
+
+    .chantier-icon.blue {
+      background: rgba(30, 136, 229, 0.1);
+    }
+
+    .chantier-icon.green {
+      background: rgba(67, 160, 71, 0.1);
+    }
+
+    .chantier-icon.gold {
+      background: rgba(255, 179, 0, 0.1);
+    }
+
+    .chantier-icon.red {
+      background: rgba(229, 57, 53, 0.1);
+    }
+
+    .chantier-body h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(1rem, 1.5vw, 1.3rem);
+      font-weight: 700;
+      margin-bottom: 0.3rem;
+    }
+
+    .chantier-body p {
+      font-size: clamp(0.75rem, 1vw, 0.9rem);
+      color: var(--grey);
+      margin-bottom: 0.6rem;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.2rem 0.8rem;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .badge.blue {
+      background: rgba(30, 136, 229, 0.15);
+      color: var(--blue);
+    }
+
+    .badge.green {
+      background: rgba(67, 160, 71, 0.15);
+      color: var(--green);
+    }
+
+    .badge.gold {
+      background: rgba(255, 179, 0, 0.15);
+      color: var(--gold);
+    }
+
+    .badge.red {
+      background: rgba(229, 57, 53, 0.15);
+      color: var(--red);
+    }
+
+    /* ── Avant/Après (Slide 4) ── */
+    .split-avant {
+      background: linear-gradient(135deg, rgba(229, 57, 53, 0.06) 0%, rgba(229, 57, 53, 0.12) 100%);
+      padding: 5vh 4vw;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+    }
+
+    .split-apres {
+      background: linear-gradient(135deg, rgba(67, 160, 71, 0.06) 0%, rgba(67, 160, 71, 0.12) 100%);
+      padding: 5vh 4vw;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+    }
+
+    .split-avant::before,
+    .split-apres::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+    }
+
+    .split-avant::before {
+      background: var(--red);
+    }
+
+    .split-apres::before {
+      background: var(--green);
+    }
+
+    .split-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: clamp(1.5rem, 2.5vw, 2rem);
+      margin-bottom: 3vh;
+    }
+
+    .split-avant .split-title {
+      color: var(--red);
+    }
+
+    .split-apres .split-title {
+      color: var(--green);
+    }
+
+    .split-item {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.8vh 0;
+      font-size: clamp(0.8rem, 1.2vw, 1.05rem);
+    }
+
+    .split-item .mark {
+      font-weight: 700;
+      font-size: 1.1em;
+      flex-shrink: 0;
+      width: 22px;
+    }
+
+    .split-avant .mark {
+      color: var(--red);
+    }
+
+    .split-apres .mark {
+      color: var(--green);
+    }
+
+    .center-badge {
+      position: absolute;
+      bottom: 6vh;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--navy-card);
+      border: 1px solid var(--purple);
+      border-radius: 10px;
+      padding: 1.5rem 2.5rem;
+      text-align: center;
+      z-index: 10;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .center-badge .amount {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: clamp(1.3rem, 2.5vw, 1.8rem);
+      color: var(--gold);
+    }
+
+    .center-badge .quote {
+      font-style: italic;
+      color: var(--grey);
+      font-size: clamp(0.7rem, 1vw, 0.85rem);
+      margin-top: 0.3rem;
+    }
+
+    /* ── ROI slides (5 & 6) ── */
+    .calc-display {
+      text-align: center;
+      margin-bottom: 2vh;
+    }
+
+    .calc-formula {
+      font-family: 'DM Sans', sans-serif;
+      font-size: clamp(1.5rem, 3vw, 2.5rem);
+      color: var(--light);
+      opacity: 0.8;
+      margin-bottom: 0.5vh;
+    }
+
+    .calc-equals {
+      font-size: clamp(1.2rem, 2vw, 1.8rem);
+      color: var(--grey);
+      margin-bottom: 0.5vh;
+    }
+
+    .calc-result {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: clamp(3rem, 6vw, 5rem);
+    }
+
+    .calc-result.gold {
+      color: var(--gold);
+      text-shadow: 0 0 30px rgba(255, 179, 0, 0.35), 0 0 60px rgba(255, 179, 0, 0.15);
+    }
+
+    .calc-result.green {
+      color: var(--green);
+      text-shadow: 0 0 30px rgba(67, 160, 71, 0.35), 0 0 60px rgba(67, 160, 71, 0.15);
+    }
+
+    .stat-value {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: clamp(1.5rem, 2.5vw, 2.2rem);
+      color: var(--white);
+      margin-bottom: 0.2rem;
+    }
+
+    .stat-label {
+      font-size: clamp(0.7rem, 1vw, 0.85rem);
+      color: var(--grey);
+    }
+
+    .stat-sub {
+      font-size: clamp(0.6rem, 0.8vw, 0.7rem);
+      color: rgba(154, 171, 187, 0.6);
+      margin-top: 0.2rem;
+    }
+
+    .tagline {
+      text-align: center;
+      font-style: italic;
+      color: var(--grey);
+      font-size: clamp(0.85rem, 1.2vw, 1.1rem);
+      margin-top: 3vh;
+    }
+
+    /* ── Click zones ── */
+    .click-left,
+    .click-right {
+      position: fixed;
+      top: 0;
+      width: 15%;
+      height: 100%;
+      z-index: 50;
+      cursor: pointer;
+    }
+
+    .click-left {
+      left: 0;
+    }
+
+    .click-right {
+      right: 0;
+    }
+
+    /* ── Navigation ── */
+    .nav {
+      position: fixed;
+      bottom: 2.5vh;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      z-index: 100;
+      background: rgba(1, 22, 56, 0.85);
+      backdrop-filter: blur(10px);
+      padding: 0.5rem 1.2rem;
+      border-radius: 30px;
+      border: 1px solid rgba(157, 79, 158, 0.2);
+    }
+
+    .nav-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--grey);
+      opacity: 0.3;
+      cursor: pointer;
+      transition: all 0.3s;
+      position: relative;
+    }
+
+    .nav-dot.active {
+      background: var(--purple);
+      opacity: 1;
+      transform: scale(1.3);
+    }
+
+    /* Tooltip on nav dots */
+    .nav-dot::after {
+      content: attr(data-label);
+      position: absolute;
+      bottom: 150%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--navy-card);
+      color: var(--light);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.55rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      border: 1px solid rgba(157, 79, 158, 0.2);
+    }
+
+    .nav-dot:hover::after {
+      opacity: 1;
+    }
+
+    .nav-counter {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--grey);
+      margin-left: 0.5rem;
+    }
+
+    .nav-hint {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      color: rgba(154, 171, 187, 0.4);
+      margin-left: 0.5rem;
+    }
+
+    /* ── Custom cursor ── */
+    .cursor {
+      position: fixed;
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--purple);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+      mix-blend-mode: difference;
+    }
+
+    /* ── Animations ── */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Use CSS custom property --delay for staggered animations */
+    .slide.active .anim {
+      animation: fadeInUp 0.5s ease forwards;
+      animation-delay: var(--delay, 0s);
+      opacity: 0;
+    }
+
+    .slide.active .grid-2x2 .card {
+      animation: fadeInUp 0.4s ease forwards;
+      opacity: 0;
+    }
+
+    .slide.active .grid-2x2 .card:nth-child(1) {
+      animation-delay: 0.15s;
+    }
+
+    .slide.active .grid-2x2 .card:nth-child(2) {
+      animation-delay: 0.25s;
+    }
+
+    .slide.active .grid-2x2 .card:nth-child(3) {
+      animation-delay: 0.35s;
+    }
+
+    .slide.active .grid-2x2 .card:nth-child(4) {
+      animation-delay: 0.45s;
+    }
+
+    .slide.active .grid-3 .card {
+      animation: fadeInUp 0.4s ease forwards;
+      opacity: 0;
+    }
+
+    .slide.active .grid-3 .card:nth-child(1) {
+      animation-delay: 0.2s;
+    }
+
+    .slide.active .grid-3 .card:nth-child(2) {
+      animation-delay: 0.3s;
+    }
+
+    .slide.active .grid-3 .card:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    /* Count-up animation helper */
+    @keyframes countPulse {
+      0% {
+        transform: scale(0.9);
+        opacity: 0;
+      }
+
+      60% {
+        transform: scale(1.04);
+      }
+
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .slide.active .calc-result {
+      animation: countPulse 0.6s ease forwards;
+      animation-delay: 0.3s;
+      opacity: 0;
+    }
+
+    /* ── Responsive (presentation mode) ── */
+    @media (max-width: 768px) {
+
+      .grid-2x2,
+      .grid-3 {
+        grid-template-columns: 1fr;
+      }
+
+      .split {
+        grid-template-columns: 1fr;
+        height: auto;
+      }
+
+      .s1-layout {
+        flex-direction: column;
+      }
+
+      .slide {
+        padding: 3vh 4vw;
+      }
+
+      .click-left,
+      .click-right {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="cursor" id="cursor"></div>
+
+  <!-- Click Zones -->
+  <div class="click-left" id="clickLeft"></div>
+  <div class="click-right" id="clickRight"></div>
+
+  <div class="deck" id="deck">
+
+    <!-- ═══ SLIDE 1 — LE BACK-OFFICE INVISIBLE ═══ -->
+    <div class="slide active" data-accent="var(--purple)">
+      <div class="s1-layout">
+        <div>
+          <div class="hero-text anim" style="--delay:0.2s">
+            5 outils.<br><span class="accent">0 connexion.</span>
+          </div>
+          <div class="subtitle anim" style="--delay:0.3s">Le back-office que personne ne voit.</div>
+        </div>
+        <div class="anim" style="--delay:0.4s">
+          <div class="tools-container">
+            <div class="tool-box">
+              <div class="icon">📊</div>CRM
+            </div>
+            <div class="tool-box">
+              <div class="icon">📋</div>Compta
+            </div>
+            <div class="tool-box">
+              <div class="icon">💬</div>Slack
+            </div>
+            <div class="tool-box">
+              <div class="icon">🏢</div>Gestion
+            </div>
+            <div class="tools-x-overlay">✕</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ SLIDE 2 — PROFIL GREYT ═══ -->
+    <div class="slide">
+      <div class="label anim" style="--delay:0.1s">Use Case</div>
+      <div class="profile-card anim" style="--delay:0.2s">
+        <div class="profile-header">
+          <div class="profile-avatar">G</div>
+          <div>
+            <h2>Greyt</h2>
+            <div class="sub">Agence de transformation digitale</div>
+          </div>
+        </div>
+        <hr class="separator">
+        <div class="profile-row"><span class="key">Localisation</span><span class="val">Cologne / Trèves,
+            Allemagne</span></div>
+        <div class="profile-row"><span class="key">Équipe</span><span class="val">60 personnes</span></div>
+        <div class="profile-row"><span class="key">Départements</span><span class="val">Consulting, Tech,
+            Marketing</span></div>
+        <div class="profile-row"><span class="key">Outils</span><span class="val">Make.com + Airtable</span></div>
+        <div class="profile-row"><span class="key">Source</span><span class="val">make.com/success-stories</span></div>
+      </div>
+    </div>
+
+    <!-- ═══ SLIDE 3 — LES 4 CHANTIERS GREYT ═══ -->
+    <div class="slide">
+      <div class="label anim" style="--delay:0.1s">Ce qu'ils ont automatisé</div>
+      <div class="grid-2x2">
+        <div class="card blue">
+          <div class="chantier-card">
+            <div class="chantier-icon blue">🗄️</div>
+            <div class="chantier-body">
+              <h3>Centralisation</h3>
+              <p>5-6 outils → 1 base Airtable</p>
+              <span class="badge blue">Temps réel</span>
+            </div>
+          </div>
+        </div>
+        <div class="card green">
+          <div class="chantier-card">
+            <div class="chantier-icon green">📈</div>
+            <div class="chantier-body">
+              <h3>Dashboards Live</h3>
+              <p>Chaque équipe voit ses KPIs</p>
+              <span class="badge green">Rentabilité ×2</span>
+            </div>
+          </div>
+        </div>
+        <div class="card gold">
+          <div class="chantier-card">
+            <div class="chantier-icon gold">🤖</div>
+            <div class="chantier-body">
+              <h3>Validation IA</h3>
+              <p>Détection doublons auto</p>
+              <span class="badge gold">0 doublon</span>
+            </div>
+          </div>
+        </div>
+        <div class="card red">
+          <div class="chantier-card">
+            <div class="chantier-icon red">👤</div>
+            <div class="chantier-body">
+              <h3>Onboarding Auto</h3>
+              <p>Selfie → Portrait pro IA</p>
+              <span class="badge red">0 admin</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ SLIDE 4 — AVANT / APRÈS ═══ -->
+    <div class="slide no-accent" style="padding:0;">
+      <div class="split">
+        <div class="split-avant">
+          <div class="split-title">AVANT</div>
+          <div class="split-item"><span class="mark">✕</span> 3 ETP admin à temps plein</div>
+          <div class="split-item"><span class="mark">✕</span> Données fragmentées sur 5-6 outils</div>
+          <div class="split-item"><span class="mark">✕</span> Reporting hebdo en retard</div>
+          <div class="split-item"><span class="mark">✕</span> Rentabilité projet invisible</div>
+          <div class="split-item"><span class="mark">✕</span> Doublons contacts partout</div>
+        </div>
+        <div class="split-apres">
+          <div class="split-title">APRÈS</div>
+          <div class="split-item"><span class="mark">✓</span> 0,5 ETP admin</div>
+          <div class="split-item"><span class="mark">✓</span> 1 base Airtable centralisée</div>
+          <div class="split-item"><span class="mark">✓</span> Dashboards live temps réel</div>
+          <div class="split-item"><span class="mark">✓</span> Rentabilité projet ×2</div>
+          <div class="split-item"><span class="mark">✓</span> Validation IA anti-doublons</div>
+        </div>
+      </div>
+      <div class="center-badge">
+        <div class="amount">€125K / an économisés</div>
+        <div class="quote">« On fonctionne comme une boîte de 500. »</div>
+      </div>
+    </div>
+
+    <!-- ═══ SLIDE 5 — ROI GREYT ═══ -->
+    <div class="slide">
+      <div class="label anim" style="--delay:0.1s">ROI — Greyt (60 personnes)</div>
+      <div class="calc-display anim" style="--delay:0.2s">
+        <div class="calc-formula">2,5 ETP × 50 000€</div>
+        <div class="calc-equals">=</div>
+        <div class="calc-result gold" data-countup="125000" data-suffix="€ / an">125 000€ / an</div>
+      </div>
+      <div class="grid-3">
+        <div class="card red" style="text-align:center;">
+          <div class="stat-value">3 → 0,5</div>
+          <div class="stat-label">ETP Admin</div>
+        </div>
+        <div class="card green" style="text-align:center;">
+          <div class="stat-value">×2</div>
+          <div class="stat-label">Rentabilité</div>
+        </div>
+        <div class="card blue" style="text-align:center;">
+          <div class="stat-value">0</div>
+          <div class="stat-label">Impact client</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ SLIDE 6 — ROI AGENCE 5 PERSONNES ═══ -->
+    <div class="slide">
+      <div class="label anim" style="--delay:0.1s">ROI — Ton agence (5 personnes)</div>
+      <div class="calc-display anim" style="--delay:0.2s">
+        <div class="calc-formula">4h/sem × 80€ × 52 sem</div>
+        <div class="calc-equals">=</div>
+        <div class="calc-result green" data-countup="16640" data-suffix="€ / an">16 640€ / an</div>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5vw; max-width:700px; margin:0 auto;">
+        <div class="card" style="text-align:center; border-color:rgba(154,171,187,0.15);">
+          <div class="stat-label" style="margin-bottom:0.3rem;">Coût</div>
+          <div class="stat-value">240€ / an</div>
+          <div class="stat-sub">n8n + Airtable + Slack</div>
+        </div>
+        <div class="card green" style="text-align:center;">
+          <div class="stat-label" style="margin-bottom:0.3rem;">ROI</div>
+          <div class="stat-value" style="color:var(--green); font-size:clamp(2rem,3.5vw,3rem);" data-countup="69"
+            data-suffix="×">69×</div>
+          <div class="stat-sub">ta mise</div>
+        </div>
+      </div>
+      <div class="tagline anim" style="--delay:0.5s">Et ton client n'a rien vu.</div>
+    </div>
+
+  </div>
+
+  <!-- ── Navigation ── -->
+  <nav class="nav" id="nav">
+    <div class="nav-dot active" data-slide="0" data-label="Intro"></div>
+    <div class="nav-dot" data-slide="1" data-label="Greyt"></div>
+    <div class="nav-dot" data-slide="2" data-label="Chantiers"></div>
+    <div class="nav-dot" data-slide="3" data-label="Avant/Après"></div>
+    <div class="nav-dot" data-slide="4" data-label="ROI Greyt"></div>
+    <div class="nav-dot" data-slide="5" data-label="ROI Agence"></div>
+    <span class="nav-counter" id="counter">1 / 6</span>
+    <span class="nav-hint">← →</span>
+  </nav>
+
+  <script>
+    // Cursor
+    const cursor = document.getElementById('cursor');
+    document.addEventListener('mousemove', e => {
+      cursor.style.left = e.clientX - 10 + 'px';
+      cursor.style.top = e.clientY - 10 + 'px';
+    });
+
+    // Slides
+    const slides = document.querySelectorAll('.slide');
+    const dots = document.querySelectorAll('.nav-dot');
+    const counter = document.getElementById('counter');
+    let current = 0;
+
+    function goTo(n) {
+      if (n < 0 || n >= slides.length || n === current) return;
+      const dir = n > current ? 1 : -1;
+      const prev = current;
+
+      slides[prev].classList.remove('active');
+      if (dir > 0) slides[prev].classList.add('exit-left');
+
+      current = n;
+      slides[current].classList.add('active');
+
+      dots.forEach((d, i) => d.classList.toggle('active', i === current));
+      counter.textContent = `${current + 1} / ${slides.length}`;
+
+      // Clean previous exit class
+      setTimeout(() => slides[prev].classList.remove('exit-left'), 500);
+
+      // Trigger count-up animations on active slide
+      runCountUps(slides[current]);
+    }
+
+    // Click zones
+    document.getElementById('clickLeft').addEventListener('click', () => goTo(current - 1));
+    document.getElementById('clickRight').addEventListener('click', () => goTo(current + 1));
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goTo(current + 1); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); goTo(current - 1); }
+      if (e.key === 'Home') goTo(0);
+      if (e.key === 'End') goTo(slides.length - 1);
+    });
+
+    dots.forEach(dot => dot.addEventListener('click', () => goTo(+dot.dataset.slide)));
+
+    // Touch
+    let touchStart = 0;
+    document.addEventListener('touchstart', e => touchStart = e.touches[0].clientX);
+    document.addEventListener('touchend', e => {
+      const diff = touchStart - e.changedTouches[0].clientX;
+      if (Math.abs(diff) > 50) goTo(current + (diff > 0 ? 1 : -1));
+    });
+
+    // Count-up animation for ROI numbers
+    function runCountUps(slide) {
+      const els = slide.querySelectorAll('[data-countup]');
+      els.forEach(el => {
+        const target = parseInt(el.dataset.countup, 10);
+        const suffix = el.dataset.suffix || '';
+        const duration = 1200;
+        const start = performance.now();
+
+        function step(now) {
+          const elapsed = now - start;
+          const progress = Math.min(elapsed / duration, 1);
+          // Ease-out cubic
+          const eased = 1 - Math.pow(1 - progress, 3);
+          const val = Math.round(eased * target);
+          el.textContent = val.toLocaleString('fr-FR').replace(/\u202F/g, ' ') + suffix;
+          if (progress < 1) requestAnimationFrame(step);
+        }
+
+        // Delay to sync with slide transition
+        setTimeout(() => requestAnimationFrame(step), 400);
+      });
+    }
+  </script>
+
+</body>
+
+</html>
