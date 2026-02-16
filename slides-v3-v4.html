@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Slides Vidéos #3 & #4 — L'Atelier de l'Automatisation</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --purple: #9D4F9E;
+  --purple-light: #B76DB8;
+  --purple-glow: rgba(157, 79, 158, 0.3);
+  --navy: #011638;
+  --navy-light: #0A2A5C;
+  --light: #EEF0F2;
+  --white: #FFFFFF;
+  --red: #E74C3C;
+  --red-glow: rgba(231, 76, 60, 0.4);
+  --green: #2ECC71;
+  --green-glow: rgba(46, 204, 113, 0.4);
+  --orange: #F39C12;
+  --gray: #8892A4;
+  --dark-bg: #060B18;
+  --card-bg: rgba(10, 20, 45, 0.7);
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+html, body { 
+  width: 100%; height: 100%; overflow: hidden; 
+  background: var(--dark-bg); color: var(--light);
+  font-family: var(--font-body);
+}
+
+.slide {
+  position: absolute; inset: 0;
+  display: none; flex-direction: column;
+  justify-content: center; align-items: center;
+  padding: 60px 80px;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.slide.active { display: flex; opacity: 1; }
+
+/* Background effects */
+.slide::before {
+  content: ''; position: absolute; inset: 0; z-index: 0;
+  background: 
+    radial-gradient(ellipse 80% 60% at 20% 80%, rgba(157, 79, 158, 0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 50% at 80% 20%, rgba(1, 22, 56, 0.4) 0%, transparent 70%);
+}
+.slide > * { position: relative; z-index: 1; }
+
+/* Grid noise */
+.slide::after {
+  content: ''; position: absolute; inset: 0; z-index: 0;
+  background-image: 
+    linear-gradient(rgba(157, 79, 158, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(157, 79, 158, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Navigation */
+.nav-bar {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 16px 40px;
+  background: linear-gradient(to top, rgba(6, 11, 24, 0.95), transparent);
+}
+.nav-bar .counter {
+  font-family: var(--font-mono); font-size: 13px; color: var(--gray);
+  letter-spacing: 2px;
+}
+.nav-bar .label {
+  font-family: var(--font-mono); font-size: 11px; color: var(--purple-light);
+  text-transform: uppercase; letter-spacing: 3px;
+}
+.progress {
+  position: fixed; top: 0; left: 0; height: 3px; z-index: 100;
+  background: linear-gradient(90deg, var(--purple), var(--purple-light));
+  transition: width 0.4s ease;
+}
+
+/* Typography */
+.title-huge {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: clamp(48px, 6vw, 96px); line-height: 1.05;
+  letter-spacing: -2px;
+}
+.title-large {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: clamp(36px, 4vw, 64px); line-height: 1.1;
+  letter-spacing: -1.5px;
+}
+.title-mid {
+  font-family: var(--font-display); font-weight: 600;
+  font-size: clamp(24px, 2.5vw, 40px); line-height: 1.2;
+  letter-spacing: -0.5px;
+}
+.subtitle {
+  font-family: var(--font-body); font-weight: 400;
+  font-size: clamp(16px, 1.5vw, 22px); line-height: 1.6;
+  color: var(--gray);
+}
+.label-tag {
+  font-family: var(--font-mono); font-size: 12px; font-weight: 600;
+  letter-spacing: 3px; text-transform: uppercase;
+  color: var(--purple-light);
+  padding: 6px 16px;
+  border: 1px solid rgba(157, 79, 158, 0.3);
+  border-radius: 4px;
+  display: inline-block;
+}
+
+/* Number hero */
+.number-hero {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: clamp(80px, 12vw, 180px);
+  letter-spacing: -4px; line-height: 1;
+  background: linear-gradient(135deg, var(--light) 0%, var(--purple-light) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 60px var(--purple-glow));
+}
+.number-red {
+  background: linear-gradient(135deg, var(--red) 0%, #FF6B6B 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 60px var(--red-glow));
+}
+.number-green {
+  background: linear-gradient(135deg, var(--green) 0%, #6BFF9E 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 60px var(--green-glow));
+}
+
+/* Cards */
+.card {
+  background: var(--card-bg);
+  border: 1px solid rgba(157, 79, 158, 0.15);
+  border-radius: 12px;
+  padding: 32px;
+  backdrop-filter: blur(20px);
+}
+.card-accent {
+  border-left: 3px solid var(--purple);
+}
+
+/* Table */
+.data-table {
+  width: 100%; border-collapse: separate; border-spacing: 0;
+  font-family: var(--font-body); font-size: 18px;
+}
+.data-table th {
+  font-family: var(--font-mono); font-size: 13px;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--purple-light); padding: 14px 24px;
+  text-align: left;
+  border-bottom: 1px solid rgba(157, 79, 158, 0.3);
+}
+.data-table td {
+  padding: 18px 24px; color: var(--light);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+.data-table tr:last-child td { border-bottom: none; }
+.data-table .highlight-red { color: var(--red); font-weight: 700; }
+.data-table .highlight-green { color: var(--green); font-weight: 700; }
+.data-table .highlight-purple { color: var(--purple-light); font-weight: 600; }
+.data-table .dim { color: var(--gray); }
+
+/* Comparison */
+.comparison {
+  display: grid; grid-template-columns: 1fr auto 1fr;
+  gap: 40px; align-items: center; width: 100%;
+}
+.comparison .vs {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 28px; color: var(--gray);
+  width: 60px; height: 60px;
+  display: flex; align-items: center; justify-content: center;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+}
+.comp-card {
+  padding: 40px; border-radius: 16px; text-align: center;
+}
+.comp-card.bad {
+  background: linear-gradient(135deg, rgba(231, 76, 60, 0.1), rgba(231, 76, 60, 0.02));
+  border: 1px solid rgba(231, 76, 60, 0.2);
+}
+.comp-card.good {
+  background: linear-gradient(135deg, rgba(46, 204, 113, 0.1), rgba(46, 204, 113, 0.02));
+  border: 1px solid rgba(46, 204, 113, 0.2);
+}
+
+/* Graph area */
+.graph-container {
+  width: 100%; max-width: 900px; position: relative;
+}
+.graph-container canvas { width: 100%; height: auto; }
+
+/* Guardrail cards */
+.guardrails {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 24px; width: 100%;
+}
+.guardrail {
+  padding: 32px 28px; border-radius: 16px;
+  background: var(--card-bg);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(20px);
+  text-align: center;
+}
+.guardrail .icon {
+  font-size: 48px; margin-bottom: 16px; display: block;
+}
+.guardrail .g-title {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 20px; margin-bottom: 12px;
+}
+.guardrail .g-desc {
+  font-size: 15px; color: var(--gray); line-height: 1.5;
+}
+.guardrail.g-temp { border-top: 3px solid var(--green); }
+.guardrail.g-struct { border-top: 3px solid var(--purple); }
+.guardrail.g-human { border-top: 3px solid var(--orange); }
+.guardrail.g-temp .g-title { color: var(--green); }
+.guardrail.g-struct .g-title { color: var(--purple-light); }
+.guardrail.g-human .g-title { color: var(--orange); }
+
+/* Flow */
+.flow {
+  display: flex; align-items: center; gap: 12px;
+  flex-wrap: wrap; justify-content: center;
+}
+.flow-node {
+  padding: 14px 22px; border-radius: 10px;
+  font-family: var(--font-mono); font-size: 14px;
+  background: var(--card-bg);
+  border: 1px solid rgba(157, 79, 158, 0.2);
+}
+.flow-node.no-ai {
+  border-color: rgba(46, 204, 113, 0.3);
+  color: var(--green);
+}
+.flow-node.ai {
+  border-color: rgba(157, 79, 158, 0.4);
+  color: var(--purple-light);
+}
+.flow-arrow {
+  font-size: 20px; color: var(--gray);
+}
+
+/* Section divider */
+.divider-slide { 
+  background: linear-gradient(135deg, var(--navy) 0%, var(--dark-bg) 100%);
+}
+.divider-slide::before {
+  background: radial-gradient(ellipse 50% 50% at 50% 50%, var(--purple-glow) 0%, transparent 70%) !important;
+}
+
+/* Animations */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.slide.active .anim-1 { animation: fadeUp 0.6s 0.1s ease both; }
+.slide.active .anim-2 { animation: fadeUp 0.6s 0.3s ease both; }
+.slide.active .anim-3 { animation: fadeUp 0.6s 0.5s ease both; }
+.slide.active .anim-4 { animation: fadeUp 0.6s 0.7s ease both; }
+.slide.active .anim-5 { animation: fadeUp 0.6s 0.9s ease both; }
+
+@keyframes pulse { 
+  0%, 100% { filter: drop-shadow(0 0 40px var(--purple-glow)); }
+  50% { filter: drop-shadow(0 0 80px rgba(157, 79, 158, 0.5)); }
+}
+.pulse { animation: pulse 3s ease infinite; }
+
+@keyframes countUp {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+.slide.active .count-up { animation: countUp 0.8s 0.3s ease both; }
+
+.text-center { text-align: center; }
+.mb-8 { margin-bottom: 8px; }
+.mb-16 { margin-bottom: 16px; }
+.mb-24 { margin-bottom: 24px; }
+.mb-32 { margin-bottom: 32px; }
+.mb-48 { margin-bottom: 48px; }
+.w-full { width: 100%; }
+.max-w-800 { max-width: 800px; }
+.max-w-1000 { max-width: 1000px; }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+
+<!-- ==================== SLIDE 0: COVER V3 ==================== -->
+<div class="slide divider-slide active" data-section="v3">
+  <div class="text-center">
+    <div class="label-tag anim-1 mb-32">Vidéo #3</div>
+    <div class="title-huge anim-2 mb-24" style="color: var(--light);">
+      On verra<br>plus tard.
+    </div>
+    <div class="subtitle anim-3 mb-48">
+      Croyance #5 — « J'ai d'autres priorités. »
+    </div>
+    <div class="anim-4" style="font-family: var(--font-mono); font-size: 13px; color: var(--purple-light); letter-spacing: 2px;">
+      L'ATELIER DE L'AUTOMATISATION
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 1: L'INDÉPENDANTE ==================== -->
+<div class="slide" data-section="v3">
+  <div class="w-full max-w-1000 text-center">
+    <div class="label-tag anim-1 mb-24">Palier 1 — Vécu direct</div>
+    <div class="title-mid anim-2 mb-48" style="color: var(--light);">
+      Une indépendante. Toute seule.<br>
+      <span style="color: var(--red);">Une journée entière par semaine sur Excel.</span>
+    </div>
+    <div class="anim-3" style="display: flex; gap: 32px; justify-content: center; flex-wrap: wrap;">
+      <div class="card" style="min-width: 200px; text-align: center; padding: 28px 36px;">
+        <div style="font-family: var(--font-mono); font-size: 11px; letter-spacing: 2px; color: var(--gray); margin-bottom: 12px;">TAUX HORAIRE</div>
+        <div style="font-family: var(--font-display); font-size: 42px; font-weight: 700; color: var(--light);">€80<span style="font-size: 20px; color: var(--gray);">/h</span></div>
+        <div style="font-size: 13px; color: var(--gray); margin-top: 4px;">Conservateur</div>
+      </div>
+      <div class="card" style="min-width: 200px; text-align: center; padding: 28px 36px;">
+        <div style="font-family: var(--font-mono); font-size: 11px; letter-spacing: 2px; color: var(--gray); margin-bottom: 12px;">TEMPS ADMIN</div>
+        <div style="font-family: var(--font-display); font-size: 42px; font-weight: 700; color: var(--orange);">8h<span style="font-size: 20px; color: var(--gray);">/sem</span></div>
+        <div style="font-size: 13px; color: var(--gray); margin-top: 4px;">1 journée complète</div>
+      </div>
+      <div class="card" style="min-width: 200px; text-align: center; padding: 28px 36px; border-color: rgba(231,76,60,0.3);">
+        <div style="font-family: var(--font-mono); font-size: 11px; letter-spacing: 2px; color: var(--red); margin-bottom: 12px;">COÛT ANNUEL</div>
+        <div style="font-family: var(--font-display); font-size: 42px; font-weight: 700; color: var(--red);">€30 720</div>
+        <div style="font-size: 13px; color: var(--gray); margin-top: 4px;">€80 × 8h × 48 sem</div>
+      </div>
+    </div>
+    <div class="anim-4" style="margin-top: 36px;">
+      <div class="subtitle" style="color: var(--gray);">
+        Et encore, c'est pour une indépendante. <span style="color: var(--red); font-weight: 600;">Toute seule.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 4: GREYT — ÉTUDE DE CAS ==================== -->
+<div class="slide" data-section="v3">
+  <div class="w-full max-w-1000">
+    <div class="label-tag anim-1 mb-24">Palier 2 — Étude de cas Make</div>
+    <div class="title-mid anim-2 mb-32" style="color: var(--light);">
+      Agence Greyt — <span style="color: var(--red);">3 temps pleins sur l'admin.</span>
+    </div>
+    <div class="anim-3" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+      <div class="card card-accent" style="text-align: center; padding: 36px;">
+        <div style="font-family: var(--font-mono); font-size: 11px; letter-spacing: 2px; color: var(--gray); margin-bottom: 16px;">STRUCTURE</div>
+        <div style="font-family: var(--font-display); font-size: 28px; font-weight: 700; color: var(--light); margin-bottom: 8px;">Plusieurs dizaines</div>
+        <div style="font-size: 15px; color: var(--gray);">de personnes</div>
+      </div>
+      <div class="card card-accent" style="text-align: center; padding: 36px;">
+        <div style="font-family: var(--font-mono); font-size: 11px; letter-spacing: 2px; color: var(--gray); margin-bottom: 16px;">ADMIN MANUELLE</div>
+        <div style="font-family: var(--font-display); font-size: 28px; font-weight: 700; color: var(--red); margin-bottom: 8px;">3 temps pleins</div>
+        <div style="font-size: 15px; color: var(--gray);">dédiés au back-office</div>
+      </div>
+    </div>
+    <div class="anim-4" style="margin-top: 32px; text-align: center;">
+      <div style="font-family: var(--font-display); font-size: 22px; font-weight: 600; color: var(--gray); margin-bottom: 8px;">Coût annuel de la non-action :</div>
+      <div style="font-family: var(--font-display); font-size: 56px; font-weight: 700; color: var(--red); filter: drop-shadow(0 0 30px rgba(231,76,60,0.3));">€125 000<span style="font-size: 22px; color: var(--gray);">/an</span></div>
+    </div>
+    <div class="anim-5" style="margin-top: 20px; text-align: center;">
+      <span style="font-family: var(--font-mono); font-size: 12px; color: var(--purple-light); letter-spacing: 1px;">
+        Source : étude de cas publiée par Make.com
+      </span>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 5: GRAPHE COÛT DE L'INACTION ==================== -->
+<div class="slide" data-section="v3">
+  <div class="w-full max-w-1000 text-center">
+    <div class="label-tag anim-1 mb-24">Le coût de l'inaction</div>
+    <div class="title-mid anim-2 mb-32" style="color: var(--light);">
+      Chaque mois que tu repousses <span style="color: var(--red);">s'additionne.</span>
+    </div>
+    <div class="anim-3" style="margin: 0 auto; max-width: 900px;">
+      <svg id="cumulSvg" viewBox="0 0 900 440" style="width:100%;height:auto;">
+        <defs>
+          <linearGradient id="lossGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#E74C3C" stop-opacity="0.02"/>
+            <stop offset="100%" stop-color="#E74C3C" stop-opacity="0.25"/>
+          </linearGradient>
+          <filter id="glowRed"><feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#E74C3C" flood-opacity="0.6"/></filter>
+        </defs>
+        <g id="gridLines"></g>
+        <g id="yLabels"></g>
+        <g id="xLabels"></g>
+        <path id="lossArea" fill="url(#lossGrad)"/>
+        <polyline id="lossLine" fill="none" stroke="#E74C3C" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#glowRed)"/>
+        <circle id="dotEnd" r="7" fill="#E74C3C"/>
+        <g id="milestones"></g>
+      </svg>
+    </div>
+    <div class="anim-4" style="margin-top: 20px;">
+      <span style="font-family: var(--font-mono); font-size: 14px; color: var(--red); letter-spacing: 1px;">
+        Basé sur €125 000/an d'économies non réalisées (case study Greyt)
+      </span>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 6: CHRONOMÈTRE ==================== -->
+<div class="slide" data-section="v3">
+  <div class="w-full max-w-1000">
+    <div class="label-tag anim-1 mb-32">Le workflow en action</div>
+    <div class="comparison anim-2">
+      <div class="comp-card good" style="padding: 48px;">
+        <div style="font-family: var(--font-mono); font-size: 12px; letter-spacing: 3px; color: var(--green); margin-bottom: 24px;">SYSTÈME</div>
+        <div style="font-family: var(--font-display); font-size: 72px; font-weight: 700; color: var(--green);">12 sec</div>
+        <div style="color: var(--gray); margin-top: 12px; font-size: 16px;">Données récoltées → Rapport PDF → Mail prêt</div>
+      </div>
+      <div class="vs">VS</div>
+      <div class="comp-card bad" style="padding: 48px;">
+        <div style="font-family: var(--font-mono); font-size: 12px; letter-spacing: 3px; color: var(--red); margin-bottom: 24px;">HUMAIN</div>
+        <div style="font-family: var(--font-display); font-size: 72px; font-weight: 700; color: var(--red);">3h</div>
+        <div style="color: var(--gray); margin-top: 12px; font-size: 16px;">Copier-coller + mise en forme + vérification</div>
+      </div>
+    </div>
+    <div class="text-center anim-3" style="margin-top: 32px;">
+      <div class="subtitle">× 30 clients = <span style="color: var(--red); font-weight: 700;">90h/mois</span> gaspillées</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 5: DIVIDER V4 ==================== -->
+<div class="slide divider-slide" data-section="v4">
+  <div class="text-center">
+    <div class="label-tag anim-1 mb-32">Vidéo #4</div>
+    <div class="title-huge anim-2 mb-24" style="color: var(--light);">
+      L'IA, c'est<br>pas fiable.
+    </div>
+    <div class="subtitle anim-3 mb-48">
+      Croyance #6 — « Ça invente des trucs. »
+    </div>
+    <div class="anim-4" style="font-family: var(--font-mono); font-size: 13px; color: var(--purple-light); letter-spacing: 2px;">
+      L'ATELIER DE L'AUTOMATISATION
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 9: T'AS RAISON ==================== -->
+<div class="slide" data-section="v4">
+  <div class="text-center max-w-800">
+    <div class="title-huge anim-1" style="color: var(--green); margin-bottom: 32px;">
+      T'as raison.
+    </div>
+    <div class="title-mid anim-2" style="color: var(--gray);">
+      ChatGPT invente des trucs. C'est un fait.
+    </div>
+    <div class="anim-3" style="margin-top: 48px; padding-top: 48px; border-top: 1px solid rgba(255,255,255,0.1);">
+      <div class="title-mid" style="color: var(--light);">
+        Mais ce que t'appelles « IA »<br>
+        et ce que j'installe chez mes clients —<br>
+        <span style="color: var(--purple-light);">c'est pas la même chose.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 10: TUYAU vs CERVEAU ==================== -->
+<div class="slide" data-section="v4">
+  <div class="w-full max-w-1000">
+    <div class="label-tag anim-1 mb-32">La confusion</div>
+    <div class="comparison anim-2">
+      <div class="comp-card bad" style="padding: 40px;">
+        <div style="font-size: 64px; margin-bottom: 16px;">🧠</div>
+        <div style="font-family: var(--font-display); font-size: 28px; font-weight: 700; color: var(--red); margin-bottom: 16px;">Le Cerveau</div>
+        <div style="font-family: var(--font-mono); font-size: 12px; letter-spacing: 2px; color: var(--red); margin-bottom: 20px;">IA GÉNÉRATIVE</div>
+        <div style="color: var(--gray); line-height: 2; font-size: 16px;">
+          Produit du texte<br>
+          Créatif<br>
+          <span style="color: var(--red); font-weight: 600;">Peut halluciner</span>
+        </div>
+      </div>
+      <div class="vs">≠</div>
+      <div class="comp-card good" style="padding: 40px;">
+        <div style="font-size: 64px; margin-bottom: 16px;">🔧</div>
+        <div style="font-family: var(--font-display); font-size: 28px; font-weight: 700; color: var(--green); margin-bottom: 16px;">Le Tuyau</div>
+        <div style="font-family: var(--font-mono); font-size: 12px; letter-spacing: 2px; color: var(--green); margin-bottom: 20px;">AUTOMATISATION</div>
+        <div style="color: var(--gray); line-height: 2; font-size: 16px;">
+          Transporte des données<br>
+          Déterministe<br>
+          <span style="color: var(--green); font-weight: 600;">Zéro invention</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 11: 80% SANS IA ==================== -->
+<div class="slide" data-section="v4">
+  <div class="text-center">
+    <div class="label-tag anim-1 mb-32">Zone 1 — Pas d'IA ici</div>
+    <div class="number-hero number-green count-up" style="font-size: clamp(80px, 14vw, 200px);">80%</div>
+    <div class="title-mid anim-3" style="margin-top: 24px; color: var(--light);">
+      des automatisations PME<br>
+      <span style="color: var(--green);">n'utilisent aucune IA.</span>
+    </div>
+    <div class="subtitle anim-4" style="margin-top: 16px;">
+      Pourquoi mettre un cerveau là où t'as besoin d'un tuyau ?
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 12: FLOW FACTURATION ==================== -->
+<div class="slide" data-section="v4">
+  <div class="w-full max-w-1000 text-center">
+    <div class="label-tag anim-1 mb-24">Zone 1 — Facturation automatique</div>
+    <div class="title-mid anim-2 mb-32" style="color: var(--light);">Aucune IA. Que de la plomberie.</div>
+    <div class="flow anim-3 mb-48">
+      <div class="flow-node no-ai">📋 Commandes</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node no-ai">👤 Lookup Client</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node no-ai">🧮 Calcul HT/TVA</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node no-ai">📄 Facture PDF</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node no-ai">📧 Envoi</div>
+    </div>
+    <table class="data-table anim-4" style="max-width: 700px; margin: 0 auto;">
+      <thead>
+        <tr><th></th><th>Humain</th><th>Workflow</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="color: var(--gray);">20 factures</td>
+          <td class="highlight-red">~45 min</td>
+          <td class="highlight-green">4 sec</td>
+        </tr>
+        <tr>
+          <td style="color: var(--gray);">Erreurs</td>
+          <td class="highlight-red">2-3 typiques</td>
+          <td class="highlight-green">0</td>
+        </tr>
+        <tr>
+          <td style="color: var(--gray);">Hallucination ?</td>
+          <td class="dim">—</td>
+          <td class="highlight-green">Impossible</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 13: LES 3 GARDES-FOUS ==================== -->
+<div class="slide" data-section="v4">
+  <div class="w-full max-w-1000">
+    <div class="label-tag anim-1 mb-24">Zone 2 — L'IA en laisse</div>
+    <div class="title-mid anim-2 mb-32 text-center" style="color: var(--light);">
+      Quand on utilise l'IA, on la <span style="color: var(--purple-light);">bride.</span>
+    </div>
+    <div class="guardrails anim-3">
+      <div class="guardrail g-temp">
+        <span class="icon">🌡️</span>
+        <div class="g-title">Température à 0</div>
+        <div class="g-desc">
+          Le curseur de créativité.<br>
+          À 1, elle improvise.<br>
+          <strong style="color: var(--green);">À 0, elle reformule.</strong>
+        </div>
+      </div>
+      <div class="guardrail g-struct">
+        <span class="icon">📐</span>
+        <div class="g-title">Format imposé</div>
+        <div class="g-desc">
+          Structured output.<br>
+          Objet. Corps. Ton.<br>
+          <strong style="color: var(--purple-light);">Hors format = rejeté.</strong>
+        </div>
+      </div>
+      <div class="guardrail g-human">
+        <span class="icon">👁️</span>
+        <div class="g-title">Validation humaine</div>
+        <div class="g-desc">
+          Human-in-the-loop.<br>
+          Brouillon → Tu valides.<br>
+          <strong style="color: var(--orange);">Rien ne part sans toi.</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 14: FLOW RELANCE ==================== -->
+<div class="slide" data-section="v4">
+  <div class="w-full max-w-1000 text-center">
+    <div class="label-tag anim-1 mb-24">Zone 2 — Relance impayés</div>
+    <div class="title-mid anim-2 mb-32" style="color: var(--light);">L'IA écrit. Toi, tu valides.</div>
+    <div class="flow anim-3 mb-32">
+      <div class="flow-node no-ai">📋 Facture J+30</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node no-ai">📊 Données client</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node ai">🧠 LLM bridé</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node ai" style="border-color: var(--orange); color: var(--orange);">👁️ Validation Slack</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node no-ai">📧 Envoi</div>
+    </div>
+    <div class="card card-accent anim-4" style="max-width: 600px; margin: 0 auto; text-align: left;">
+      <div style="font-family: var(--font-mono); font-size: 11px; color: var(--purple-light); letter-spacing: 2px; margin-bottom: 12px;">GARDES-FOUS ACTIFS</div>
+      <div style="display: flex; gap: 24px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="color: var(--green);">✓</span>
+          <span style="font-size: 14px;">Temp. = 0</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="color: var(--green);">✓</span>
+          <span style="font-size: 14px;">Format imposé</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="color: var(--green);">✓</span>
+          <span style="font-size: 14px;">Données injectées uniquement</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="color: var(--green);">✓</span>
+          <span style="font-size: 14px;">Validation humaine</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 15: CLOSER ==================== -->
+<div class="slide" data-section="v4">
+  <div class="text-center max-w-800">
+    <div class="title-large anim-1" style="color: var(--light); margin-bottom: 40px;">
+      Le client ne reçoit <span style="color: var(--red);">rien</span><br>
+      que tu n'as pas <span style="color: var(--green);">vu.</span>
+    </div>
+    <div class="subtitle anim-2" style="max-width: 500px; margin: 0 auto; padding-top: 40px; border-top: 1px solid rgba(255,255,255,0.1);">
+      L'IA hallucine quand tu lui laisses le champ libre.<br><br>
+      Un système conçu avec les bons gardes-fous —<br>
+      <span style="color: var(--green); font-weight: 600;">c'est plus fiable que n'importe quel humain<br>sur des tâches répétitives.</span>
+    </div>
+  </div>
+</div>
+
+<!-- NAV BAR -->
+<div class="nav-bar">
+  <div class="label" id="sectionLabel">VIDÉO #3</div>
+  <div class="counter"><span id="current">1</span> / <span id="total"></span></div>
+  <div style="font-family: var(--font-mono); font-size: 11px; color: var(--gray);">← →  NAVIGATION</div>
+</div>
+
+<script>
+// Slide navigation
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let current = 0;
+
+document.getElementById('total').textContent = total;
+
+function goTo(n) {
+  if (n < 0 || n >= total) return;
+  slides[current].classList.remove('active');
+  current = n;
+  slides[current].classList.add('active');
+  document.getElementById('current').textContent = current + 1;
+  document.getElementById('progress').style.width = ((current + 1) / total * 100) + '%';
+  
+  const section = slides[current].dataset.section;
+  document.getElementById('sectionLabel').textContent = section === 'v3' ? 'VIDÉO #3' : 'VIDÉO #4';
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goTo(current + 1); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); goTo(current - 1); }
+  if (e.key === 'Home') goTo(0);
+  if (e.key === 'End') goTo(total - 1);
+});
+
+// Touch navigation
+let touchStartX = 0;
+document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+document.addEventListener('touchend', e => {
+  const diff = touchStartX - e.changedTouches[0].clientX;
+  if (Math.abs(diff) > 50) { diff > 0 ? goTo(current + 1) : goTo(current - 1); }
+});
+
+goTo(0);
+
+// SVG Cost of Inaction chart — single descending curve over 3 years
+(function buildSvgChart() {
+  const pad = { top: 40, right: 70, bottom: 60, left: 90 };
+  const W = 900, H = 440;
+  const gW = W - pad.left - pad.right;
+  const gH = H - pad.top - pad.bottom;
+  const ns = 'http://www.w3.org/2000/svg';
+
+  const monthly = 10417; // €125K / 12
+  const totalMonths = 36;
+  const maxLoss = 400000;
+
+  const data = [];
+  for (let i = 0; i <= totalMonths; i++) data.push(i * monthly);
+
+  function x(i) { return pad.left + (i / totalMonths) * gW; }
+  function y(v) { return pad.top + (v / maxLoss) * gH; } // 0 at top, max at bottom
+
+  // Grid + Y labels
+  const gridEl = document.getElementById('gridLines');
+  const yLabelsEl = document.getElementById('yLabels');
+  const steps = [0, 50000, 100000, 125000, 150000, 200000, 250000, 300000, 375000];
+  for (const v of steps) {
+    const line = document.createElementNS(ns, 'line');
+    line.setAttribute('x1', pad.left); line.setAttribute('x2', W - pad.right);
+    line.setAttribute('y1', y(v)); line.setAttribute('y2', y(v));
+    line.setAttribute('stroke', v === 125000 ? 'rgba(231,76,60,0.2)' : 'rgba(255,255,255,0.05)');
+    line.setAttribute('stroke-width', '1');
+    if (v === 125000) line.setAttribute('stroke-dasharray', '8,4');
+    gridEl.appendChild(line);
+
+    const txt = document.createElementNS(ns, 'text');
+    txt.setAttribute('x', pad.left - 14); txt.setAttribute('y', y(v) + 4);
+    txt.setAttribute('text-anchor', 'end');
+    txt.setAttribute('fill', v === 125000 ? '#E74C3C' : '#8892A4');
+    txt.setAttribute('font-family', 'JetBrains Mono');
+    txt.setAttribute('font-size', v === 125000 ? '13' : '12');
+    if (v === 125000) txt.setAttribute('font-weight', '700');
+    txt.textContent = '\u2212\u20AC' + Math.round(v / 1000) + 'K';
+    yLabelsEl.appendChild(txt);
+  }
+
+  // X axis
+  const xLabelsEl = document.getElementById('xLabels');
+  const xTicks = [
+    { m: 0, label: "Aujourd'hui" }, { m: 6, label: '6 mois' },
+    { m: 12, label: '1 an' }, { m: 18, label: '18 mois' },
+    { m: 24, label: '2 ans' }, { m: 30, label: '30 mois' },
+    { m: 36, label: '3 ans' }
+  ];
+  for (const t of xTicks) {
+    const txt = document.createElementNS(ns, 'text');
+    txt.setAttribute('x', x(t.m)); txt.setAttribute('y', H - pad.bottom + 24);
+    txt.setAttribute('text-anchor', 'middle');
+    txt.setAttribute('fill', t.m === 36 ? '#E74C3C' : '#8892A4');
+    txt.setAttribute('font-family', 'JetBrains Mono'); txt.setAttribute('font-size', '12');
+    if (t.m === 36) txt.setAttribute('font-weight', '700');
+    txt.textContent = t.label;
+    xLabelsEl.appendChild(txt);
+
+    const tick = document.createElementNS(ns, 'line');
+    tick.setAttribute('x1', x(t.m)); tick.setAttribute('x2', x(t.m));
+    tick.setAttribute('y1', H - pad.bottom); tick.setAttribute('y2', H - pad.bottom + 6);
+    tick.setAttribute('stroke', 'rgba(255,255,255,0.15)'); tick.setAttribute('stroke-width', '1');
+    xLabelsEl.appendChild(tick);
+  }
+
+  // Loss area fill
+  let pathD = 'M' + x(0) + ',' + y(0);
+  for (let i = 0; i <= totalMonths; i++) pathD += 'L' + x(i) + ',' + y(data[i]);
+  pathD += 'L' + x(totalMonths) + ',' + y(0) + 'Z';
+  document.getElementById('lossArea').setAttribute('d', pathD);
+
+  // Loss line
+  document.getElementById('lossLine').setAttribute('points',
+    data.map((v, i) => x(i) + ',' + y(v)).join(' '));
+
+  // End dot
+  document.getElementById('dotEnd').setAttribute('cx', x(36));
+  document.getElementById('dotEnd').setAttribute('cy', y(data[36]));
+
+  // Milestones at Year 1, 2, 3
+  const milestonesEl = document.getElementById('milestones');
+  const ms = [
+    { m: 12, label: '\u2212\u20AC125K', sub: 'An 1' },
+    { m: 24, label: '\u2212\u20AC250K', sub: 'An 2' },
+    { m: 36, label: '\u2212\u20AC375K', sub: 'An 3' }
+  ];
+  for (const m of ms) {
+    const isFinal = m.m === 36;
+    const cy = y(data[m.m]);
+
+    const dot = document.createElementNS(ns, 'circle');
+    dot.setAttribute('cx', x(m.m)); dot.setAttribute('cy', cy);
+    dot.setAttribute('r', isFinal ? '8' : '5'); dot.setAttribute('fill', '#E74C3C');
+    milestonesEl.appendChild(dot);
+
+    if (isFinal) {
+      const ring = document.createElementNS(ns, 'circle');
+      ring.setAttribute('cx', x(m.m)); ring.setAttribute('cy', cy);
+      ring.setAttribute('r', '14'); ring.setAttribute('fill', 'none');
+      ring.setAttribute('stroke', '#E74C3C'); ring.setAttribute('stroke-width', '2');
+      ring.setAttribute('opacity', '0.3');
+      milestonesEl.appendChild(ring);
+    }
+
+    const boxW = isFinal ? 110 : 90, boxH = 44;
+    const boxX = x(m.m) - boxW / 2, boxY = cy + (isFinal ? 22 : 14);
+
+    const rect = document.createElementNS(ns, 'rect');
+    rect.setAttribute('x', boxX); rect.setAttribute('y', boxY);
+    rect.setAttribute('width', boxW); rect.setAttribute('height', boxH);
+    rect.setAttribute('rx', '6');
+    rect.setAttribute('fill', isFinal ? 'rgba(231,76,60,0.2)' : 'rgba(231,76,60,0.1)');
+    rect.setAttribute('stroke', '#E74C3C');
+    rect.setAttribute('stroke-width', isFinal ? '1.5' : '0.5');
+    milestonesEl.appendChild(rect);
+
+    const valTxt = document.createElementNS(ns, 'text');
+    valTxt.setAttribute('x', boxX + boxW / 2); valTxt.setAttribute('y', boxY + 18);
+    valTxt.setAttribute('text-anchor', 'middle'); valTxt.setAttribute('fill', '#E74C3C');
+    valTxt.setAttribute('font-family', 'Space Grotesk');
+    valTxt.setAttribute('font-size', isFinal ? '17' : '14');
+    valTxt.setAttribute('font-weight', '700');
+    valTxt.textContent = m.label;
+    milestonesEl.appendChild(valTxt);
+
+    const subTxt = document.createElementNS(ns, 'text');
+    subTxt.setAttribute('x', boxX + boxW / 2); subTxt.setAttribute('y', boxY + 34);
+    subTxt.setAttribute('text-anchor', 'middle'); subTxt.setAttribute('fill', '#8892A4');
+    subTxt.setAttribute('font-family', 'JetBrains Mono'); subTxt.setAttribute('font-size', '10');
+    subTxt.textContent = m.sub;
+    milestonesEl.appendChild(subTxt);
+  }
+})();
+</script>
+</body>
+</html>
