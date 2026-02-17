@@ -292,6 +292,125 @@ html, body {
 .w-full { width: 100%; }
 .max-w-800 { max-width: 800px; }
 .max-w-1000 { max-width: 1000px; }
+
+/* Demo interfaces */
+.demo-interface {
+  background: rgba(10, 20, 45, 0.8);
+  border: 1px solid rgba(157, 79, 158, 0.25);
+  border-radius: 16px;
+  padding: 32px;
+  backdrop-filter: blur(20px);
+  width: 100%;
+  max-width: 950px;
+}
+.demo-execute-btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 14px 32px; border: none; border-radius: 10px;
+  background: linear-gradient(135deg, var(--purple), var(--purple-light));
+  color: white; font-family: var(--font-display); font-size: 16px; font-weight: 600;
+  cursor: pointer; transition: all 0.3s ease; letter-spacing: 0.5px;
+}
+.demo-execute-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px var(--purple-glow); }
+.demo-execute-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+.demo-loading { display: none; align-items: center; gap: 12px; margin-top: 20px; }
+.demo-loading.visible { display: flex; }
+.demo-spinner {
+  width: 24px; height: 24px; border: 3px solid rgba(157, 79, 158, 0.2);
+  border-top-color: var(--purple-light); border-radius: 50%; animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.demo-loading-text { font-family: var(--font-mono); font-size: 13px; color: var(--purple-light); }
+.demo-preview {
+  display: none; margin-top: 24px; padding: 24px;
+  background: rgba(243, 156, 18, 0.08); border: 1px solid rgba(243, 156, 18, 0.3);
+  border-radius: 12px;
+}
+.demo-preview.visible { display: block; }
+.demo-preview-title {
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--orange); margin-bottom: 16px;
+}
+.demo-preview-field {
+  display: flex; justify-content: space-between; padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05); font-size: 14px;
+}
+.demo-preview-field .label { color: var(--gray); }
+.demo-preview-field .value { color: var(--light); font-weight: 500; }
+.demo-approval-buttons { display: flex; gap: 12px; margin-top: 20px; }
+.demo-approve-btn, .demo-reject-btn {
+  flex: 1; padding: 12px 20px; border: none; border-radius: 8px;
+  font-family: var(--font-display); font-size: 14px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s;
+}
+.demo-approve-btn { background: rgba(46, 204, 113, 0.15); color: var(--green); border: 1px solid rgba(46, 204, 113, 0.3); }
+.demo-approve-btn:hover { background: rgba(46, 204, 113, 0.25); }
+.demo-reject-btn { background: rgba(231, 76, 60, 0.15); color: var(--red); border: 1px solid rgba(231, 76, 60, 0.3); }
+.demo-reject-btn:hover { background: rgba(231, 76, 60, 0.25); }
+.demo-result {
+  display: none; margin-top: 24px; padding: 20px; border-radius: 12px;
+  font-family: var(--font-mono); font-size: 14px;
+}
+.demo-result.visible { display: block; }
+.demo-result.success { background: rgba(46, 204, 113, 0.08); border: 1px solid rgba(46, 204, 113, 0.3); color: var(--green); }
+.demo-result.error { background: rgba(231, 76, 60, 0.08); border: 1px solid rgba(231, 76, 60, 0.3); color: var(--red); }
+.demo-batch-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px; margin-bottom: 8px; border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: all 0.2s;
+}
+.demo-batch-item .info { flex: 1; }
+.demo-batch-item .info .client { font-weight: 600; color: var(--light); font-size: 14px; }
+.demo-batch-item .info .details { font-size: 12px; color: var(--gray); margin-top: 2px; }
+.demo-batch-toggle {
+  padding: 6px 16px; border: none; border-radius: 6px;
+  font-family: var(--font-mono); font-size: 11px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s; letter-spacing: 1px;
+}
+.demo-batch-toggle.approved { background: rgba(46, 204, 113, 0.15); color: var(--green); border: 1px solid rgba(46, 204, 113, 0.3); }
+.demo-batch-toggle.rejected { background: rgba(231, 76, 60, 0.15); color: var(--red); border: 1px solid rgba(231, 76, 60, 0.3); }
+.demo-submit-batch {
+  display: none; width: 100%; padding: 14px; margin-top: 16px; border: none; border-radius: 10px;
+  background: linear-gradient(135deg, var(--green), #27ae60);
+  color: white; font-family: var(--font-display); font-size: 15px; font-weight: 600;
+  cursor: pointer; transition: all 0.3s;
+}
+.demo-submit-batch.visible { display: block; }
+.demo-submit-batch:hover { transform: translateY(-1px); box-shadow: 0 6px 20px var(--green-glow); }
+.demo-submit-batch:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.demo-meta-section {
+  display: flex; flex-wrap: wrap; gap: 12px 24px;
+  padding: 12px 16px; margin-bottom: 12px;
+  background: rgba(255,255,255,0.05); border-radius: 8px;
+  border-left: 3px solid #e67e22;
+}
+.demo-meta-item { display: flex; align-items: center; gap: 6px; }
+.demo-meta-label { font-weight: 600; font-size: 0.85em; color: #e67e22; }
+.demo-meta-value { font-family: monospace; font-size: 0.9em; word-break: break-all; }
+.demo-pdf-btn {
+  display: inline-block; padding: 8px 16px; margin-top: 8px;
+  background: #e67e22; color: white; border: none; border-radius: 6px;
+  cursor: pointer; font-weight: 600; text-decoration: none;
+}
+.demo-pdf-btn:hover { background: #d35400; }
+.demo-preview-iframe {
+  width: 100%; height: 500px;
+  border: 2px solid var(--orange); border-radius: 12px;
+  background: white; margin-bottom: 16px;
+}
+.demo-email-preview {
+  height: 220px; padding: 0; margin-top: 8px;
+  background: white; border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px; display: none; width: 100%;
+}
+.demo-email-preview.visible { display: block; }
+.demo-batch-item .expand-btn {
+  padding: 4px 10px; margin-left: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 4px;
+  background: transparent; color: var(--gray);
+  font-family: var(--font-mono); font-size: 10px; cursor: pointer;
+}
+.demo-batch-item .expand-btn:hover { color: var(--light); border-color: rgba(255, 255, 255, 0.3); }
 </style>
 </head>
 <body>
@@ -411,6 +530,39 @@ html, body {
   </div>
 </div>
 
+<!-- ==================== SLIDE DEMO WF1: RAPPORT HEBDO ==================== -->
+<div class="slide" data-section="v3">
+  <div class="w-full max-w-1000 text-center">
+    <div class="label-tag anim-1 mb-24">Demo en direct</div>
+    <div class="title-mid anim-2 mb-32" style="color: var(--light);">
+      Le workflow en action — <span style="color: var(--purple-light);">Rapport hebdomadaire</span>
+    </div>
+    <div class="subtitle anim-3 mb-32" style="max-width: 600px; margin: 0 auto;">
+      4 sources de donnees &rarr; rapport PDF &rarr; brouillon Gmail &rarr; validation &rarr; envoi
+    </div>
+    <div class="demo-interface anim-4" style="margin: 0 auto;" id="demo-wf1">
+      <button class="demo-execute-btn" onclick="executeRapportHebdo()">Lancer le workflow</button>
+      <div class="demo-loading" id="wf1-loading">
+        <div class="demo-spinner"></div>
+        <span class="demo-loading-text">Collecte des donnees et generation du rapport...</span>
+      </div>
+      <div class="demo-preview" id="wf1-preview">
+        <div class="demo-preview-title">Apercu du rapport</div>
+        <div id="wf1-meta" class="demo-meta-section" style="display:none">
+          <div class="demo-meta-item"><span class="demo-meta-label">Destinataire :</span> <span id="wf1-recipient" class="demo-meta-value"></span></div>
+          <div class="demo-meta-item"><span class="demo-meta-label">Objet :</span> <span id="wf1-subject" class="demo-meta-value"></span></div>
+        </div>
+        <iframe id="wf1-preview-iframe" class="demo-preview-iframe" sandbox="allow-same-origin"></iframe>
+        <div class="demo-approval-buttons">
+          <button class="demo-approve-btn" onclick="approveRapport(true)">Approuver l'envoi</button>
+          <button class="demo-reject-btn" onclick="approveRapport(false)">Refuser</button>
+        </div>
+      </div>
+      <div class="demo-result" id="wf1-result"></div>
+    </div>
+  </div>
+</div>
+
 <!-- ==================== SLIDE 6: CHRONOMÈTRE ==================== -->
 <div class="slide" data-section="v3">
   <div class="w-full max-w-1000">
@@ -514,6 +666,42 @@ html, body {
   </div>
 </div>
 
+<!-- ==================== SLIDE DEMO WF2: FACTURE AUTO ==================== -->
+<div class="slide" data-section="v4">
+  <div class="w-full max-w-1000 text-center">
+    <div class="label-tag anim-1 mb-24">Demo en direct &mdash; Zone 1</div>
+    <div class="title-mid anim-2 mb-32" style="color: var(--light);">
+      Facturation automatique <span style="color: var(--green);">en action</span>
+    </div>
+    <div class="subtitle anim-3 mb-32" style="max-width: 600px; margin: 0 auto;">
+      Generation facture &rarr; PDF &rarr; brouillon Gmail &rarr; validation &rarr; envoi
+    </div>
+    <div class="demo-interface anim-4" style="margin: 0 auto;" id="demo-wf2">
+      <button class="demo-execute-btn" onclick="executeFactureAuto()">Generer une facture</button>
+      <div class="demo-loading" id="wf2-loading">
+        <div class="demo-spinner"></div>
+        <span class="demo-loading-text">Generation de la facture et brouillon email...</span>
+      </div>
+      <div class="demo-preview" id="wf2-preview">
+        <div class="demo-preview-title">Facture generee</div>
+        <div id="wf2-meta" class="demo-meta-section" style="display:none">
+          <div class="demo-meta-item"><span class="demo-meta-label">Numero :</span> <span id="wf2-numero" class="demo-meta-value"></span></div>
+          <div class="demo-meta-item"><span class="demo-meta-label">Client :</span> <span id="wf2-client" class="demo-meta-value"></span></div>
+          <div class="demo-meta-item"><span class="demo-meta-label">Montant TTC :</span> <span id="wf2-montant" class="demo-meta-value"></span></div>
+          <div class="demo-meta-item"><span class="demo-meta-label">Destinataire :</span> <span id="wf2-recipient" class="demo-meta-value"></span></div>
+          <div class="demo-meta-item"><span class="demo-meta-label">Objet :</span> <span id="wf2-subject" class="demo-meta-value"></span></div>
+        </div>
+        <a id="wf2-draft-link" class="demo-pdf-btn" style="display:none; font-size: 15px; padding: 12px 24px; text-align: center; width: 100%; box-sizing: border-box; margin-bottom: 16px;" href="#" target="_blank" rel="noopener">Voir le brouillon dans Gmail</a>
+        <div class="demo-approval-buttons">
+          <button class="demo-approve-btn" onclick="approveFacture(true)">Envoyer la facture</button>
+          <button class="demo-reject-btn" onclick="approveFacture(false)">Annuler</button>
+        </div>
+      </div>
+      <div class="demo-result" id="wf2-result"></div>
+    </div>
+  </div>
+</div>
+
 <!-- ==================== SLIDE 12: FLOW FACTURATION ==================== -->
 <div class="slide" data-section="v4">
   <div class="w-full max-w-1000 text-center">
@@ -590,6 +778,32 @@ html, body {
           <strong style="color: var(--orange);">Rien ne part sans toi.</strong>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE DEMO WF3: RELANCES ==================== -->
+<div class="slide" data-section="v4">
+  <div class="w-full max-w-1000 text-center">
+    <div class="label-tag anim-1 mb-24">Demo en direct &mdash; Zone 2</div>
+    <div class="title-mid anim-2 mb-32" style="color: var(--light);">
+      Relances impayees <span style="color: var(--orange);">avec validation</span>
+    </div>
+    <div class="subtitle anim-3 mb-32" style="max-width: 600px; margin: 0 auto;">
+      Detection &rarr; IA bridee &rarr; brouillons &rarr; validation par facture &rarr; envoi
+    </div>
+    <div class="demo-interface anim-4" style="margin: 0 auto;" id="demo-wf3">
+      <button class="demo-execute-btn" onclick="executeRelances()">Traiter les relances</button>
+      <div class="demo-loading" id="wf3-loading">
+        <div class="demo-spinner"></div>
+        <span class="demo-loading-text">Analyse des factures et generation des relances...</span>
+      </div>
+      <div class="demo-preview" id="wf3-preview">
+        <div class="demo-preview-title">Relances a valider</div>
+        <div id="wf3-batch-items"></div>
+        <button class="demo-submit-batch" id="wf3-submit" onclick="submitBatchDecisions()">Valider les decisions</button>
+      </div>
+      <div class="demo-result" id="wf3-result"></div>
     </div>
   </div>
 </div>
@@ -828,6 +1042,298 @@ goTo(0);
     milestonesEl.appendChild(subTxt);
   }
 })();
+
+// =====================================================================
+// DEMO INTERACTIVES — Webhook n8n (2-webhook pattern)
+// =====================================================================
+const N8N_BASE = 'https://n8n.srv824812.hstgr.cloud';
+const WEBHOOK_URLS = {
+  wf1: N8N_BASE + '/webhook/rapport-hebdo-demo',
+  wf1_validate: N8N_BASE + '/webhook/rapport-hebdo-validate',
+  wf2: N8N_BASE + '/webhook/facture-auto-demo',
+  wf2_validate: N8N_BASE + '/webhook/facture-auto-validate',
+  wf3: N8N_BASE + '/webhook/relances-demo',
+  wf3_validate: N8N_BASE + '/webhook/relances-validate'
+};
+const MOCK_MODE = false;
+
+// State
+let wf1Data = {};
+let wf2Data = {};
+let wf3Invoices = [];
+let wf3Decisions = {};
+let processing = { wf1: false, wf2: false, wf3: false };
+
+// --- Utilities ---
+async function callWebhook(url, data = {}) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 30000);
+  try {
+    const resp = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+      signal: controller.signal
+    });
+    clearTimeout(timeout);
+    const text = await resp.text();
+    try { return JSON.parse(text); } catch { return { raw: text, status: resp.status }; }
+  } catch (err) {
+    clearTimeout(timeout);
+    if (err.name === 'AbortError') throw new Error('Timeout (30s)');
+    throw err;
+  }
+}
+
+function showLoading(id, msg) {
+  const el = document.getElementById(id);
+  if (msg) el.querySelector('.demo-loading-text').textContent = msg;
+  el.classList.add('visible');
+}
+function hideLoading(id) { document.getElementById(id).classList.remove('visible'); }
+
+function showPreview(id) { document.getElementById(id).classList.add('visible'); }
+
+function showResult(id, message, isError) {
+  const el = document.getElementById(id);
+  el.textContent = message;
+  el.className = 'demo-result visible ' + (isError ? 'error' : 'success');
+}
+
+// --- Mock data ---
+function mockPhase1_WF1() {
+  return {
+    htmlPreview: '<html><body style="font-family:Arial;padding:40px"><h1 style="color:#6c5ce7">Rapport Hebdomadaire - Pulse Digital</h1><p style="color:#888;margin-bottom:20px">Semaine du 10 au 16 fevrier 2026</p><table style="border-collapse:collapse;width:100%"><tr style="background:#6c5ce7;color:white"><th style="padding:12px">Metrique</th><th style="padding:12px">Valeur</th><th style="padding:12px">Variation</th></tr><tr><td style="padding:10px;border-bottom:1px solid #eee">Sessions</td><td style="padding:10px;border-bottom:1px solid #eee">1 247</td><td style="padding:10px;border-bottom:1px solid #eee;color:green">+12.3%</td></tr><tr><td style="padding:10px;border-bottom:1px solid #eee">Impressions</td><td style="padding:10px;border-bottom:1px solid #eee">45 320</td><td style="padding:10px;border-bottom:1px solid #eee;color:green">+8.1%</td></tr><tr><td style="padding:10px;border-bottom:1px solid #eee">ROAS</td><td style="padding:10px;border-bottom:1px solid #eee">3.2x</td><td style="padding:10px;border-bottom:1px solid #eee;color:green">+0.4</td></tr></table></body></html>',
+    draftId: 'mock-draft-123',
+    reportTitle: 'Rapport Hebdomadaire - Pulse Digital',
+    recipient: 'pierre@client.com'
+  };
+}
+function mockPhase1_WF2() {
+  return {
+    htmlPreview: '<html><body style="font-family:Arial;padding:40px"><div style="display:flex;justify-content:space-between;margin-bottom:40px"><div><div style="font-size:28px;font-weight:800;color:#6c5ce7">Pulse<span style="color:#a29bfe">Digital</span></div></div><div style="text-align:right"><h1 style="color:#6c5ce7;font-size:32px;margin:0">FACTURE</h1><p><strong>FAC-2026-042</strong></p></div></div><table style="width:100%;border-collapse:collapse"><thead><tr style="background:#6c5ce7;color:white"><th style="padding:12px;text-align:left">Description</th><th style="padding:12px">Qte</th><th style="padding:12px">Prix HT</th><th style="padding:12px">Total HT</th></tr></thead><tbody><tr><td style="padding:12px">Refonte site web</td><td style="padding:12px;text-align:center">1</td><td style="padding:12px">5000.00 EUR</td><td style="padding:12px">5000.00 EUR</td></tr></tbody></table><table style="width:350px;margin-left:auto;margin-top:20px"><tr><td style="padding:8px">Total HT</td><td style="padding:8px">5000.00 EUR</td></tr><tr><td style="padding:8px">TVA 20%</td><td style="padding:8px">1000.00 EUR</td></tr><tr style="background:#6c5ce7;color:white;font-weight:700"><td style="padding:12px">Total TTC</td><td style="padding:12px">6000.00 EUR</td></tr></table></body></html>',
+    draftId: 'mock-draft-456',
+    numero: 'FAC-2026-042',
+    nomClient: 'MaisonBio.fr',
+    nomProjet: 'Refonte site web',
+    montantHT: 5000,
+    montantTTC: 6000,
+    subject: 'Facture FAC-2026-042 - Refonte site web - Pulse Digital',
+    recipient: 'contact@maisonbio.fr',
+    draftUrl: 'https://mail.google.com/mail/u/0/#drafts?compose=mock123abc'
+  };
+}
+function mockPhase1_WF3() {
+  return { invoices: [
+    { factureId: 'rec1', draftId: 'mock-d1', numero: 'FAC-2025-089', clientNom: 'TechnoVert SAS', montantTTC: '3 600', joursRetard: 35, niveau: 'relance1', emailSubject: 'Relance - Facture FAC-2025-089', emailBody: "Bonjour Jean,\n\nNous nous permettons de vous rappeler que la facture FAC-2025-089 d'un montant de 3 600 EUR TTC reste impayee a ce jour.\n\nMerci de bien vouloir proceder au reglement.\n\nCordialement,\nPulse Digital", contact: 'Jean Dupont', montant_ttc: '3600.00', jours_retard: 35 },
+    { factureId: 'rec2', draftId: 'mock-d2', numero: 'FAC-2025-072', clientNom: 'FitCoach App', montantTTC: '7 200', joursRetard: 52, niveau: 'relance2', emailSubject: 'Relance urgente - Facture FAC-2025-072', emailBody: "Bonjour Marie,\n\nMalgre notre precedente relance, la facture FAC-2025-072 d'un montant de 7 200 EUR TTC reste impayee depuis 52 jours.\n\nNous vous prions de regulariser cette situation dans les plus brefs delais.\n\nCordialement,\nPulse Digital", contact: 'Marie Laurent', montant_ttc: '7200.00', jours_retard: 52 },
+    { factureId: 'rec3', draftId: 'mock-d3', numero: 'FAC-2025-058', clientNom: 'LegalStart Pro', montantTTC: '12 000', joursRetard: 68, niveau: 'litige', emailSubject: 'Mise en demeure - Facture FAC-2025-058', emailBody: "Madame, Monsieur,\n\nLa presente constitue une mise en demeure concernant la facture FAC-2025-058 d'un montant de 12 000 EUR TTC, impayee depuis 68 jours.\n\nSans reglement sous 8 jours, nous nous reservons le droit d'engager des poursuites.\n\nCordialement,\nPulse Digital", contact: 'Paul Martin', montant_ttc: '12000.00', jours_retard: 68 }
+  ] };
+}
+
+// ===================== WF1: Rapport Hebdomadaire =====================
+async function executeRapportHebdo() {
+  if (processing.wf1) return;
+  processing.wf1 = true;
+  const container = document.getElementById('demo-wf1');
+  container.querySelector('.demo-execute-btn').disabled = true;
+  document.getElementById('wf1-preview').classList.remove('visible');
+  document.getElementById('wf1-result').className = 'demo-result';
+  document.getElementById('wf1-meta').style.display = 'none';
+  showLoading('wf1-loading');
+
+  try {
+    const data = MOCK_MODE ? mockPhase1_WF1() : await callWebhook(WEBHOOK_URLS.wf1, {});
+    hideLoading('wf1-loading');
+    wf1Data = data;
+    document.getElementById('wf1-meta').style.display = 'flex';
+    document.getElementById('wf1-recipient').textContent = data.recipient || '';
+    document.getElementById('wf1-subject').textContent = data.reportTitle || '';
+    const iframe = document.getElementById('wf1-preview-iframe');
+    iframe.srcdoc = data.htmlPreview || '<p>Aucun apercu disponible</p>';
+    showPreview('wf1-preview');
+  } catch (err) {
+    hideLoading('wf1-loading');
+    showResult('wf1-result', 'Erreur : ' + err.message, true);
+    container.querySelector('.demo-execute-btn').disabled = false;
+    processing.wf1 = false;
+  }
+}
+
+async function approveRapport(approved) {
+  const container = document.getElementById('demo-wf1');
+  document.getElementById('wf1-preview').classList.remove('visible');
+  showLoading('wf1-loading', approved ? 'Envoi du rapport...' : 'Annulation...');
+
+  try {
+    if (MOCK_MODE) { await new Promise(r => setTimeout(r, 800)); }
+    else { await callWebhook(WEBHOOK_URLS.wf1_validate, { approved, draftId: wf1Data.draftId }); }
+    hideLoading('wf1-loading');
+    showResult('wf1-result', approved ? 'Rapport envoye au client' : 'Envoi annule — brouillon supprime', !approved);
+  } catch (err) {
+    hideLoading('wf1-loading');
+    showResult('wf1-result', 'Erreur : ' + err.message, true);
+  }
+  container.querySelector('.demo-execute-btn').disabled = false;
+  processing.wf1 = false;
+}
+
+// ===================== WF2: Facture Automatique =====================
+async function executeFactureAuto() {
+  if (processing.wf2) return;
+  processing.wf2 = true;
+  const container = document.getElementById('demo-wf2');
+  container.querySelector('.demo-execute-btn').disabled = true;
+  document.getElementById('wf2-preview').classList.remove('visible');
+  document.getElementById('wf2-result').className = 'demo-result';
+  document.getElementById('wf2-meta').style.display = 'none';
+  document.getElementById('wf2-draft-link').style.display = 'none';
+  showLoading('wf2-loading');
+
+  try {
+    const payload = { id: 'recDemoProject', fields: { Client: 'MaisonBio.fr', 'Nom projet': 'Refonte site web', 'Montant HT (EUR)': 5000, Statut: 'Termine' } };
+    const data = MOCK_MODE ? mockPhase1_WF2() : await callWebhook(WEBHOOK_URLS.wf2, payload);
+    hideLoading('wf2-loading');
+    wf2Data = data;
+    // Meta
+    document.getElementById('wf2-meta').style.display = 'flex';
+    document.getElementById('wf2-numero').textContent = data.numero || '';
+    document.getElementById('wf2-client').textContent = data.nomClient || '';
+    document.getElementById('wf2-montant').textContent = (data.montantTTC ? data.montantTTC + ' EUR' : '');
+    document.getElementById('wf2-recipient').textContent = data.recipient || '';
+    document.getElementById('wf2-subject').textContent = data.subject || '';
+    // Lien Gmail draft
+    if (data.draftUrl) {
+      const draftLink = document.getElementById('wf2-draft-link');
+      draftLink.href = data.draftUrl;
+      draftLink.style.display = 'block';
+    }
+    showPreview('wf2-preview');
+  } catch (err) {
+    hideLoading('wf2-loading');
+    showResult('wf2-result', 'Erreur : ' + err.message, true);
+    container.querySelector('.demo-execute-btn').disabled = false;
+    processing.wf2 = false;
+  }
+}
+
+async function approveFacture(approved) {
+  const container = document.getElementById('demo-wf2');
+  document.getElementById('wf2-preview').classList.remove('visible');
+  showLoading('wf2-loading', approved ? 'Envoi de la facture...' : 'Annulation...');
+
+  try {
+    if (MOCK_MODE) { await new Promise(r => setTimeout(r, 800)); }
+    else { await callWebhook(WEBHOOK_URLS.wf2_validate, { approved, draftId: wf2Data.draftId, numero: wf2Data.numero, nomClient: wf2Data.nomClient, nomProjet: wf2Data.nomProjet, montantHT: wf2Data.montantHT, montantTTC: wf2Data.montantTTC }); }
+    hideLoading('wf2-loading');
+    showResult('wf2-result', approved ? 'Facture envoyee au client' : 'Envoi annule — brouillon supprime', !approved);
+  } catch (err) {
+    hideLoading('wf2-loading');
+    showResult('wf2-result', 'Erreur : ' + err.message, true);
+  }
+  container.querySelector('.demo-execute-btn').disabled = false;
+  processing.wf2 = false;
+}
+
+// ===================== WF3: Relances Impayees =====================
+async function executeRelances() {
+  if (processing.wf3) return;
+  processing.wf3 = true;
+  const container = document.getElementById('demo-wf3');
+  container.querySelector('.demo-execute-btn').disabled = true;
+  document.getElementById('wf3-preview').classList.remove('visible');
+  document.getElementById('wf3-result').className = 'demo-result';
+  wf3Decisions = {};
+  showLoading('wf3-loading');
+
+  try {
+    const data = MOCK_MODE ? mockPhase1_WF3() : await callWebhook(WEBHOOK_URLS.wf3, {});
+    hideLoading('wf3-loading');
+    wf3Invoices = data.invoices || [];
+
+    const batchEl = document.getElementById('wf3-batch-items');
+    batchEl.innerHTML = '';
+    wf3Invoices.forEach(inv => {
+      wf3Decisions[inv.factureId] = true;
+      const niveauColors = { relance1: 'var(--green)', relance2: 'var(--orange)', litige: 'var(--red)' };
+      const niveauLabels = { relance1: 'R1', relance2: 'R2', litige: 'LITIGE' };
+      const item = document.createElement('div');
+      item.className = 'demo-batch-item';
+      item.id = 'batch-' + inv.factureId;
+      item.style.flexWrap = 'wrap';
+      item.innerHTML = `
+        <div class="info">
+          <div class="client"><span style="color:${niveauColors[inv.niveau] || 'var(--gray)'};font-family:var(--font-mono);font-size:11px;margin-right:8px;">${niveauLabels[inv.niveau] || inv.niveau}</span>${inv.contact || inv.clientNom}${inv.contact && inv.clientNom ? ' - ' + inv.clientNom : ''}</div>
+          <div class="details">${inv.numero} &middot; ${inv.montantTTC} EUR &middot; ${inv.joursRetard}j de retard</div>
+        </div>
+        <button class="expand-btn" onclick="toggleEmailPreview('${inv.factureId}')">VOIR</button>
+        <button class="demo-batch-toggle approved" onclick="toggleInvoice('${inv.factureId}')">APPROUVE</button>
+        <iframe class="demo-email-preview" id="email-${inv.factureId}" srcdoc="${(inv.emailBody || '').replace(/"/g, '&quot;')}" frameborder="0"></iframe>
+      `;
+      batchEl.appendChild(item);
+    });
+
+    document.getElementById('wf3-submit').classList.add('visible');
+    showPreview('wf3-preview');
+  } catch (err) {
+    hideLoading('wf3-loading');
+    showResult('wf3-result', 'Erreur : ' + err.message, true);
+    container.querySelector('.demo-execute-btn').disabled = false;
+    processing.wf3 = false;
+  }
+}
+
+function toggleEmailPreview(factureId) {
+  const el = document.getElementById('email-' + factureId);
+  el.classList.toggle('visible');
+  const btn = el.parentElement.querySelector('.expand-btn');
+  btn.textContent = el.classList.contains('visible') ? 'MASQUER' : 'VOIR';
+}
+
+function toggleInvoice(factureId) {
+  wf3Decisions[factureId] = !wf3Decisions[factureId];
+  const item = document.getElementById('batch-' + factureId);
+  const btn = item.querySelector('.demo-batch-toggle');
+  if (wf3Decisions[factureId]) {
+    btn.className = 'demo-batch-toggle approved';
+    btn.textContent = 'APPROUVE';
+  } else {
+    btn.className = 'demo-batch-toggle rejected';
+    btn.textContent = 'REJETE';
+  }
+}
+
+async function submitBatchDecisions() {
+  const container = document.getElementById('demo-wf3');
+  document.getElementById('wf3-preview').classList.remove('visible');
+  document.getElementById('wf3-submit').classList.remove('visible');
+
+  const decisions = wf3Invoices.map(inv => ({
+    factureId: inv.factureId,
+    draftId: inv.draftId,
+    approved: wf3Decisions[inv.factureId],
+    niveau: inv.niveau,
+    numero: inv.numero,
+    contact: inv.contact || inv.clientNom,
+    montant_ttc: inv.montant_ttc || inv.montantTTC,
+    jours_retard: inv.jours_retard || inv.joursRetard
+  }));
+  const approvedCount = decisions.filter(d => d.approved).length;
+  const rejectedCount = decisions.filter(d => !d.approved).length;
+
+  showLoading('wf3-loading', 'Envoi des decisions...');
+  try {
+    if (MOCK_MODE) { await new Promise(r => setTimeout(r, 800)); }
+    else { await callWebhook(WEBHOOK_URLS.wf3_validate, { decisions }); }
+    hideLoading('wf3-loading');
+    showResult('wf3-result', `${approvedCount} relance(s) envoyee(s), ${rejectedCount} rejetee(s)`, false);
+  } catch (err) {
+    hideLoading('wf3-loading');
+    showResult('wf3-result', 'Erreur : ' + err.message, true);
+  }
+  container.querySelector('.demo-execute-btn').disabled = false;
+  processing.wf3 = false;
+}
 </script>
 </body>
 </html>
