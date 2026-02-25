@@ -1,0 +1,21 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Audit from '../components/Audit.astro';
+import Template from '../components/Template.astro';
+import Exemple from '../components/Exemple.astro';
+import Cta from '../components/Cta.astro';
+---
+
+<Layout title="Audit — Tes compétences métier valent 130 000 € — L'Atelier Automatisation">
+  <script is:inline>
+    if (!localStorage.getItem('lm_email')) {
+      window.location.replace('/');
+    }
+  </script>
+  <main>
+    <Audit />
+    <Template />
+    <Exemple />
+    <Cta />
+  </main>
+</Layout>

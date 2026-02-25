@@ -1,0 +1,137 @@
+---
+const etapes = [
+  { jour: 'J+0', titre: 'Réception de la plainte', desc: 'Le client appelle ou envoie un email. La plainte est enregistrée dans le CRM avec catégorie + urgence.' },
+  { jour: 'J+0', titre: 'Accusé de réception personnalisé', desc: "Appel téléphonique dans les 2h. Pas d'email — un appel. Reformuler le problème, donner un délai." },
+  { jour: 'J+1', titre: 'Analyse interne + proposition', desc: "Réunion flash 15min avec l'équipe concernée. Préparer 2 options de résolution chiffrées." },
+  { jour: 'J+3', titre: 'Présentation de la solution', desc: "Appel client avec la solution retenue. Confirmer par email avec récap + planning d'exécution." },
+  { jour: 'J+7', titre: 'Suivi post-résolution', desc: "Appel de courtoisie. Vérifier la satisfaction. Mettre à jour le CRM. Clôturer le ticket." },
+];
+
+const toujours = [
+  "Toujours rappeler dans les 2h ouvrées — pas de réponse automatique",
+  "Toujours reformuler le problème avec les mots du client avant de proposer",
+  "Toujours envoyer un récap écrit après chaque échange téléphonique",
+];
+
+const jamais = [
+  "Jamais proposer un geste commercial par email — uniquement à l'oral",
+  "Jamais impliquer plus de 2 interlocuteurs côté client dans l'escalade",
+  "Jamais clôturer un ticket sans appel de suivi à J+7",
+];
+
+const exceptions = [
+  "Si CA client > 100k€/an : escalader directement au DG, pas au responsable service",
+  "Si 2e plainte en 30 jours : déclencher un audit qualité interne avant de répondre",
+  "Si le client mentionne un concurrent : alerter le commercial référent dans l'heure",
+];
+---
+
+<section id="exemple" class="py-20 px-4 border-t border-white/5">
+  <div class="max-w-4xl mx-auto">
+    <div class="text-center mb-16 fade-in">
+      <p class="text-purple-light text-sm font-semibold tracking-widest uppercase mb-4">Exemple complet</p>
+      <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Escalade client mécontent — Cabinet Morel</h2>
+      <p class="text-warm-gray text-lg max-w-2xl mx-auto">Voilà à quoi ressemble une compétence métier <strong class="text-white">correctement documentée</strong>. Chaque détail compte.</p>
+    </div>
+
+    <!-- Info card -->
+    <div class="bg-navy-light/50 border border-purple/20 rounded-2xl p-6 md:p-8 mb-12 fade-in">
+      <div class="grid md:grid-cols-2 gap-6">
+        <div>
+          <span class="text-xs text-warm-gray uppercase tracking-wider">Compétence</span>
+          <p class="text-white font-semibold text-lg mt-1">Escalade client mécontent</p>
+        </div>
+        <div>
+          <span class="text-xs text-warm-gray uppercase tracking-wider">Déclencheur</span>
+          <p class="text-white font-semibold text-lg mt-1">Un client exprime une insatisfaction (appel, email, ou via le commercial)</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="mb-16">
+      <h3 class="text-xl font-bold text-white mb-8 fade-in">Les 5 étapes du process</h3>
+      <div class="relative stagger-children">
+        <!-- Timeline line -->
+        <div class="absolute left-[19px] top-4 bottom-4 w-0.5 bg-purple/30"></div>
+
+        {etapes.map((etape, i) => (
+          <div class="relative pl-14 pb-10 last:pb-0 fade-in">
+            <!-- Dot -->
+            <div class="absolute left-2.5 top-1.5 w-4 h-4 rounded-full bg-purple border-2 border-navy timeline-dot" style={`animation-delay: ${i * 200}ms`}></div>
+            <!-- Badge -->
+            <span class="inline-block text-xs font-bold text-purple-light bg-purple/15 px-2.5 py-1 rounded-full mb-2">{etape.jour}</span>
+            <h4 class="text-lg font-semibold text-white mb-1">{etape.titre}</h4>
+            <p class="text-warm-gray text-sm leading-relaxed">{etape.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Rules grid -->
+    <div class="grid md:grid-cols-3 gap-6 stagger-children">
+      <!-- TOUJOURS -->
+      <div class="fade-in bg-navy-light/40 border border-green-500/30 rounded-2xl p-6">
+        <div class="flex items-center gap-2 mb-5">
+          <span class="w-3 h-3 bg-green-500 rounded-full"></span>
+          <h3 class="text-base font-bold text-green-400 uppercase tracking-wider">Toujours</h3>
+        </div>
+        <ul class="space-y-4">
+          {toujours.map(rule => (
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+              <span class="text-sm text-light-gray leading-relaxed">{rule}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- JAMAIS -->
+      <div class="fade-in bg-navy-light/40 border border-red-500/30 rounded-2xl p-6">
+        <div class="flex items-center gap-2 mb-5">
+          <span class="w-3 h-3 bg-red-500 rounded-full"></span>
+          <h3 class="text-base font-bold text-red-400 uppercase tracking-wider">Jamais</h3>
+        </div>
+        <ul class="space-y-4">
+          {jamais.map(rule => (
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+              <span class="text-sm text-light-gray leading-relaxed">{rule}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- EXCEPTIONS -->
+      <div class="fade-in bg-navy-light/40 border border-accent-gold/30 rounded-2xl p-6">
+        <div class="flex items-center gap-2 mb-5">
+          <span class="w-3 h-3 bg-accent-gold rounded-full"></span>
+          <h3 class="text-base font-bold text-accent-gold uppercase tracking-wider">Exceptions</h3>
+        </div>
+        <ul class="space-y-4">
+          {exceptions.map(rule => (
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-accent-gold flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M12 2a10 10 0 110 20 10 10 0 010-20z" /></svg>
+              <span class="text-sm text-light-gray leading-relaxed">{rule}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Track exemple_viewed
+  let exempleTracked = false;
+  const exempleSection = document.getElementById('exemple');
+  const exempleObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !exempleTracked) {
+        exempleTracked = true;
+        window.trackEvent('exemple_viewed');
+      }
+    });
+  }, { threshold: 0.2 });
+  exempleObserver.observe(exempleSection);
+</script>

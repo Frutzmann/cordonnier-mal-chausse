@@ -1,0 +1,184 @@
+{
+  "name": "🧠 Business Memory Agent — Skills via GitHub",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {
+          "responseMessage": "Thinking..."
+        }
+      },
+      "id": "chat-trigger",
+      "name": "Chat Trigger",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [200, 300],
+      "webhookId": "business-memory-chat"
+    },
+    {
+      "parameters": {
+        "jsCode": "// === CONFIGURATION ===\n// Add your GitHub repos containing skills here\nconst SKILLS_REPOS = [\n  { owner: 'YOUR_GITHUB_USERNAME', repo: 'business-memory-skills' }\n];\n\nconst allDirs = [];\n\nfor (const { owner, repo } of SKILLS_REPOS) {\n  // List root contents\n  const rootUrl = `https://api.github.com/repos/${owner}/${repo}/contents/`;\n  const rootResp = await this.helpers.httpRequest({\n    method: 'GET',\n    url: rootUrl,\n    headers: {\n      'Accept': 'application/vnd.github.v3+json',\n      'User-Agent': 'n8n-skills-agent'\n    }\n  });\n\n  // Find the skills directory\n  const skillsDir = rootResp.find(item => item.name === 'skills' && item.type === 'dir');\n  \n  if (skillsDir) {\n    // List contents of /skills/\n    const skillsUrl = `https://api.github.com/repos/${owner}/${repo}/contents/skills/`;\n    const skillsResp = await this.helpers.httpRequest({\n      method: 'GET',\n      url: skillsUrl,\n      headers: {\n        'Accept': 'application/vnd.github.v3+json',\n        'User-Agent': 'n8n-skills-agent'\n      }\n    });\n\n    for (const item of skillsResp) {\n      if (item.type === 'dir') {\n        allDirs.push({\n          repo: `${owner}/${repo}`,\n          skill: item.name,\n          path: `skills/${item.name}/SKILL.md`\n        });\n      }\n    }\n  }\n}\n\n// Build the directory map for the agent's system prompt\nconst directoryMap = allDirs.map(d => `- **${d.skill}** → \\`${d.repo}/${d.path}\\``).join('\\n');\n\nreturn [{\n  json: {\n    directoryMap,\n    skillsList: allDirs\n  }\n}];"
+      },
+      "id": "build-skills-index",
+      "name": "Build Skills Index",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [420, 300]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Chat Trigger').item.json.chatInput }}",
+        "options": {
+          "systemMessage": "=Tu es l'assistant IA interne du Cabinet Morel & Associés, un cabinet de conseil en gestion et optimisation pour PME basé au Luxembourg.\n\nTu as accès à la MÉMOIRE MÉTIER du cabinet via des skills stockés sur GitHub. Ces skills contiennent les règles internes, les connaissances clients, les processus opérationnels et les standards du cabinet.\n\n## Skills disponibles :\n{{ $('Build Skills Index').item.json.directoryMap }}\n\n## Instructions :\n1. Quand une question touche un domaine couvert par un skill, utilise l'outil \"Get Skill File\" pour lire le skill AVANT de répondre.\n2. Si la question couvre plusieurs domaines, lis TOUS les skills pertinents.\n3. Applique les règles du skill à la lettre. Ne dévie jamais des processus documentés.\n4. Si une exception client existe, elle PRIME sur la règle générale.\n5. Réponds en français sauf si le client concerné est anglophone (indiqué dans le skill clients).\n6. Sois concis et actionnable. Pas de blabla. Des faits, des chiffres, des actions.\n\n## Ce que tu ne fais JAMAIS :\n- Inventer des informations sur un client (si tu ne sais pas, dis-le)\n- Prendre des décisions qui nécessitent la validation de François\n- Contacter un client directement\n- Modifier les conditions contractuelles\n\nTu es un assistant, pas un décideur. Tu prépares, tu synthétises, tu recommandes. François décide."
+        }
+      },
+      "id": "agent",
+      "name": "Business Memory Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [640, 300]
+    },
+    {
+      "parameters": {
+        "model": "claude-sonnet-4-20250514",
+        "options": {
+          "maxTokensToSample": 2048,
+          "temperature": 0.3
+        }
+      },
+      "id": "anthropic-chat",
+      "name": "Anthropic Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [480, 520],
+      "credentials": {
+        "anthropicApi": {
+          "id": "YOUR_ANTHROPIC_CREDENTIAL_ID",
+          "name": "Anthropic API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "get_skill_file",
+        "description": "Récupère le contenu d'un fichier skill depuis GitHub. Utilise cet outil quand tu as besoin de lire les règles internes, les process ou les données clients du cabinet. Paramètre 'path' = le chemin complet du skill (ex: skills/clients/SKILL.md).",
+        "method": "GET",
+        "url": "=https://api.github.com/repos/YOUR_GITHUB_USERNAME/business-memory-skills/contents/{{ $fromAI('path', 'Le chemin du fichier skill à lire, ex: skills/clients/SKILL.md') }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "githubApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/vnd.github.v3.raw"
+            },
+            {
+              "name": "User-Agent",
+              "value": "n8n-skills-agent"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "get-skill-file",
+      "name": "Get Skill File",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [700, 520],
+      "credentials": {
+        "githubApi": {
+          "id": "YOUR_GITHUB_CREDENTIAL_ID",
+          "name": "GitHub API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "list_skill_folders",
+        "description": "Liste les dossiers et fichiers disponibles dans un répertoire du repo de skills. Utilise cet outil pour explorer la structure des skills disponibles. Paramètre 'directory_path' = le chemin du dossier (ex: skills/ ou skills/clients/).",
+        "method": "GET",
+        "url": "=https://api.github.com/repos/YOUR_GITHUB_USERNAME/business-memory-skills/contents/{{ $fromAI('directory_path', 'Le chemin du dossier à explorer, ex: skills/ ou skills/clients/') }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "githubApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/vnd.github.v3+json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "n8n-skills-agent"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "list-skill-folders",
+      "name": "List Skill Folders",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [860, 520],
+      "credentials": {
+        "githubApi": {
+          "id": "YOUR_GITHUB_CREDENTIAL_ID",
+          "name": "GitHub API"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "memory",
+      "name": "Window Buffer Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [640, 680]
+    }
+  ],
+  "connections": {
+    "Chat Trigger": {
+      "main": [
+        [{ "node": "Build Skills Index", "type": "main", "index": 0 }]
+      ]
+    },
+    "Build Skills Index": {
+      "main": [
+        [{ "node": "Business Memory Agent", "type": "main", "index": 0 }]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [{ "node": "Business Memory Agent", "type": "ai_languageModel", "index": 0 }]
+      ]
+    },
+    "Get Skill File": {
+      "ai_tool": [
+        [{ "node": "Business Memory Agent", "type": "ai_tool", "index": 0 }]
+      ]
+    },
+    "List Skill Folders": {
+      "ai_tool": [
+        [{ "node": "Business Memory Agent", "type": "ai_tool", "index": 0 }]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [{ "node": "Business Memory Agent", "type": "ai_memory", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "templateId": "custom-business-memory",
+    "instanceId": ""
+  },
+  "tags": [
+    { "name": "AI" },
+    { "name": "Skills" },
+    { "name": "Business Memory" }
+  ]
+}

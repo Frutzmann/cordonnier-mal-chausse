@@ -1,0 +1,74 @@
+---
+---
+<section id="cta" class="py-20 px-4 border-t border-white/5">
+  <div class="max-w-3xl mx-auto">
+    <!-- Recap -->
+    <div class="mb-16">
+      <h2 class="text-3xl md:text-4xl font-bold text-white text-center mb-12 fade-in">Ce que tu viens de découvrir</h2>
+      <div class="grid md:grid-cols-3 gap-6 stagger-children">
+        <div class="fade-in bg-navy-light/40 border border-white/10 rounded-2xl p-6 text-center">
+          <div class="w-12 h-12 rounded-full bg-purple/20 flex items-center justify-center mx-auto mb-4">
+            <span class="text-2xl font-bold text-purple-light">01</span>
+          </div>
+          <h3 class="text-white font-semibold mb-2">L'audit</h3>
+          <p class="text-warm-gray text-sm">Tu as identifié les compétences critiques qui ne reposent que sur une personne.</p>
+        </div>
+        <div class="fade-in bg-navy-light/40 border border-white/10 rounded-2xl p-6 text-center">
+          <div class="w-12 h-12 rounded-full bg-purple/20 flex items-center justify-center mx-auto mb-4">
+            <span class="text-2xl font-bold text-purple-light">02</span>
+          </div>
+          <h3 class="text-white font-semibold mb-2">Le template</h3>
+          <p class="text-warm-gray text-sm">Tu as essayé de documenter. Et tu as vu que c'est un métier en soi.</p>
+        </div>
+        <div class="fade-in bg-navy-light/40 border border-white/10 rounded-2xl p-6 text-center">
+          <div class="w-12 h-12 rounded-full bg-purple/20 flex items-center justify-center mx-auto mb-4">
+            <span class="text-2xl font-bold text-purple-light">03</span>
+          </div>
+          <h3 class="text-white font-semibold mb-2">L'exemple</h3>
+          <p class="text-warm-gray text-sm">Tu as vu le niveau de détail nécessaire. Et ce n'est qu'une seule compétence.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Big question -->
+    <div class="fade-in mb-12">
+      <div class="border-2 border-purple/40 rounded-2xl p-8 md:p-12 text-center bg-purple/5">
+        <p class="text-2xl md:text-3xl font-bold text-white leading-snug">
+          Si documenter <span class="text-purple-light">une seule</span> compétence prend autant d'effort...<br />
+          <span class="text-warm-gray">qui va le faire pour les dizaines que tu as dans ta boîte ?</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="text-center fade-in">
+      <p class="text-warm-gray text-lg mb-6">On a construit un système qui le fait pour toi. En automatique.</p>
+      <a
+        id="cta-calendly"
+        href="https://calendly.com/atelier-automatisation/decouverte"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center gap-3 px-10 py-5 bg-purple hover:bg-purple-dark text-white font-bold rounded-xl btn-glow text-xl"
+      >
+        Réserver un appel de 15 min
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+      </a>
+      <p class="text-xs text-warm-gray/50 mt-4">Gratuit. Sans engagement. On regarde ensemble si ton entreprise est éligible.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="py-10 px-4 border-t border-white/5">
+  <div class="max-w-3xl mx-auto text-center">
+    <p class="text-warm-gray/40 text-sm">L'Atelier Automatisation</p>
+    <p class="text-warm-gray/30 text-xs mt-2">On transforme l'expertise de tes équipes en process documentés et automatisés.</p>
+  </div>
+</footer>
+
+<script>
+  const ctaBtn = document.getElementById('cta-calendly');
+  ctaBtn.addEventListener('click', () => {
+    window.trackEvent('cta_calendly_click');
+  });
+</script>

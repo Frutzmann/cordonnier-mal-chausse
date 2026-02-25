@@ -1,0 +1,185 @@
+{
+  "name": "🧠 Business Memory Agent — Skills + Data + Gmail",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {
+          "responseMessage": "Je réfléchis..."
+        }
+      },
+      "id": "chat-trigger",
+      "name": "Chat Trigger",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [200, 300],
+      "webhookId": "business-memory-chat"
+    },
+    {
+      "parameters": {
+        "jsCode": "// === CONFIGURATION ===\nconst SKILLS_REPOS = [\n  { owner: 'YOUR_GITHUB_USERNAME', repo: 'business-memory-skills' }\n];\n\nconst allSkills = [];\n\nfor (const { owner, repo } of SKILLS_REPOS) {\n  const skillsUrl = `https://api.github.com/repos/${owner}/${repo}/contents/skills/`;\n  const skillsResp = await this.helpers.httpRequest({\n    method: 'GET',\n    url: skillsUrl,\n    headers: {\n      'Accept': 'application/vnd.github.v3+json',\n      'User-Agent': 'n8n-skills-agent'\n    }\n  });\n\n  for (const item of skillsResp) {\n    if (item.type === 'dir') {\n      allSkills.push({\n        skill: item.name,\n        path: `skills/${item.name}/SKILL.md`\n      });\n    }\n  }\n}\n\nconst directoryMap = allSkills.map(s => `- **${s.skill}** : \\`${s.path}\\``).join('\\n');\n\nreturn [{ json: { directoryMap, skillsList: allSkills } }];"
+      },
+      "id": "build-skills-index",
+      "name": "Build Skills Index",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [420, 300]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Chat Trigger').item.json.chatInput }}",
+        "options": {
+          "systemMessage": "=Tu es l'assistant IA interne du Cabinet Morel & Associés, un cabinet de conseil en gestion et optimisation pour PME basé au Luxembourg.\n\nTu as deux sources d'information :\n\n## 1. COMPÉTENCES (Skills sur GitHub)\nCe sont les process internes du cabinet. Comment on fait les choses ici.\n{{ $('Build Skills Index').item.json.directoryMap }}\n\nUtilise l'outil \"Lire un skill\" pour charger les instructions d'une compétence.\n\n## 2. DONNÉES CLIENTS (Google Sheets)\nCe sont les fiches clients : contacts, règles de communication, préférences, exceptions.\nUtilise l'outil \"Chercher un client\" pour récupérer les données d'un client.\n\n## 3. ACTIONS\nTu peux créer un brouillon Gmail avec l'outil \"Créer draft Gmail\" quand on te le demande.\n\n## Instructions :\n1. Quand on te demande de FAIRE quelque chose (relancer, facturer, reporter) → lis le skill approprié PUIS récupère les données client\n2. Combine la compétence (comment faire) avec les données (pour qui, quelles exceptions)\n3. Les exceptions client PRIMENT TOUJOURS sur le process standard\n4. Quand on te demande un draft email → rédige ET crée le brouillon dans Gmail\n5. Sois concis et actionnable. Des faits, des actions.\n\n## Ce que tu ne fais JAMAIS :\n- Inventer des données client. Si tu ne trouves pas → dis-le.\n- Prendre des décisions qui nécessitent validation humaine (remises, mise en demeure, recouvrement)\n- Envoyer un email directement (brouillon uniquement, l'humain valide et envoie)"
+        }
+      },
+      "id": "agent",
+      "name": "Business Memory Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [640, 300]
+    },
+    {
+      "parameters": {
+        "model": "claude-sonnet-4-20250514",
+        "options": {
+          "maxTokensToSample": 2048,
+          "temperature": 0.2
+        }
+      },
+      "id": "anthropic-chat",
+      "name": "Anthropic Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [480, 520],
+      "credentials": {
+        "anthropicApi": {
+          "id": "YOUR_ANTHROPIC_CREDENTIAL_ID",
+          "name": "Anthropic API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "lire_skill",
+        "description": "Lit un fichier skill (compétence métier) depuis GitHub. Utilise cet outil quand tu dois savoir COMMENT faire une tâche (relancer, facturer, reporter, onboarder). Paramètre 'path' = chemin du skill (ex: skills/relances/SKILL.md)",
+        "method": "GET",
+        "url": "=https://api.github.com/repos/YOUR_GITHUB_USERNAME/business-memory-skills/contents/{{ $fromAI('path', 'Chemin du skill, ex: skills/relances/SKILL.md') }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "githubApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Accept", "value": "application/vnd.github.v3.raw" },
+            { "name": "User-Agent", "value": "n8n-skills-agent" }
+          ]
+        }
+      },
+      "id": "read-skill",
+      "name": "Lire un skill",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [560, 540],
+      "credentials": {
+        "githubApi": {
+          "id": "YOUR_GITHUB_CREDENTIAL_ID",
+          "name": "GitHub API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "chercher_client",
+        "description": "Cherche les données d'un client dans la base de données (Google Sheets). Utilise cet outil quand tu as besoin des informations d'un client spécifique : contact, règles de communication, préférences de relance, exceptions, conditions de paiement. Paramètre 'client_name' = nom du client (ex: Dupont, Keysource, Patrimonia).",
+        "method": "GET",
+        "url": "=https://sheets.googleapis.com/v4/spreadsheets/YOUR_SPREADSHEET_ID/values/Clients!A:T?key=YOUR_GOOGLE_API_KEY",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "options": {}
+      },
+      "id": "search-client",
+      "name": "Chercher un client",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [720, 540],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_GOOGLE_SHEETS_CREDENTIAL_ID",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "creer_draft_gmail",
+        "description": "Crée un brouillon d'email dans Gmail. Utilise cet outil quand on te demande de préparer, rédiger ou drafter un email. L'email ne sera PAS envoyé — il sera sauvegardé en brouillon pour validation humaine. Paramètres : 'to' (destinataire), 'subject' (objet), 'body' (corps en texte simple).",
+        "method": "POST",
+        "url": "https://gmail.googleapis.com/gmail/v1/users/me/drafts",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "gmailOAuth2",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ message: { raw: Buffer.from('To: ' + $fromAI('to', 'Adresse email du destinataire') + '\\nSubject: ' + $fromAI('subject', 'Objet de l\\'email') + '\\nContent-Type: text/plain; charset=utf-8\\n\\n' + $fromAI('body', 'Corps de l\\'email')).toString('base64url') } }) }}",
+        "options": {}
+      },
+      "id": "gmail-draft",
+      "name": "Créer draft Gmail",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [880, 540],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YOUR_GMAIL_CREDENTIAL_ID",
+          "name": "Gmail OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "memory",
+      "name": "Window Buffer Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [640, 700]
+    }
+  ],
+  "connections": {
+    "Chat Trigger": {
+      "main": [
+        [{ "node": "Build Skills Index", "type": "main", "index": 0 }]
+      ]
+    },
+    "Build Skills Index": {
+      "main": [
+        [{ "node": "Business Memory Agent", "type": "main", "index": 0 }]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [{ "node": "Business Memory Agent", "type": "ai_languageModel", "index": 0 }]
+      ]
+    },
+    "Lire un skill": {
+      "ai_tool": [
+        [{ "node": "Business Memory Agent", "type": "ai_tool", "index": 0 }]
+      ]
+    },
+    "Chercher un client": {
+      "ai_tool": [
+        [{ "node": "Business Memory Agent", "type": "ai_tool", "index": 0 }]
+      ]
+    },
+    "Créer draft Gmail": {
+      "ai_tool": [
+        [{ "node": "Business Memory Agent", "type": "ai_tool", "index": 0 }]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [{ "node": "Business Memory Agent", "type": "ai_memory", "index": 0 }]
+      ]
+    }
+  },
+  "settings": { "executionOrder": "v1" },
+  "meta": { "templateId": "business-memory-agent-v2" },
+  "tags": [{ "name": "AI" }, { "name": "Skills" }, { "name": "Business Memory" }]
+}

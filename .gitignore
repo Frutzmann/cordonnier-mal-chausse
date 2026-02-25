@@ -13,4 +13,12 @@ Desktop.ini
 ~$*.docx
 ~$*.xlsx
 
+node_modules
+
+# Lead Magnet Astro
+lead-magnet/node_modules
+lead-magnet/dist
+lead-magnet/.astro
+lead-magnet/.env
+
 Shooting Frameworks

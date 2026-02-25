@@ -1,0 +1,120 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --purple: #9D4F9E;
+  --purple-light: #C98BCA;
+  --purple-dark: #7A3D7B;
+  --navy: #011638;
+  --navy-light: #1A2F52;
+  --light-gray: #EEF0F2;
+  --white: #FFFFFF;
+  --warm-gray: #D5D7DA;
+  --accent-gold: #D4A843;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--navy);
+  color: var(--light-gray);
+}
+
+/* Fade-in on scroll */
+.fade-in {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Stagger children */
+.stagger-children .fade-in:nth-child(1) { transition-delay: 0ms; }
+.stagger-children .fade-in:nth-child(2) { transition-delay: 100ms; }
+.stagger-children .fade-in:nth-child(3) { transition-delay: 200ms; }
+.stagger-children .fade-in:nth-child(4) { transition-delay: 300ms; }
+.stagger-children .fade-in:nth-child(5) { transition-delay: 400ms; }
+.stagger-children .fade-in:nth-child(6) { transition-delay: 500ms; }
+.stagger-children .fade-in:nth-child(7) { transition-delay: 600ms; }
+.stagger-children .fade-in:nth-child(8) { transition-delay: 700ms; }
+
+/* Checkbox bounce */
+@keyframes checkBounce {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.3); }
+  50% { transform: scale(0.9); }
+  70% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+.check-bounce {
+  animation: checkBounce 0.4s ease-out;
+}
+
+/* Progress bar fill */
+@keyframes progressFill {
+  from { width: 0%; }
+}
+.progress-animate {
+  animation: progressFill 0.6s ease-out;
+}
+
+/* Glow on hover */
+.btn-glow {
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+.btn-glow:hover {
+  box-shadow: 0 0 25px rgba(157, 79, 158, 0.5);
+  transform: translateY(-1px);
+}
+
+/* Input focus */
+.input-focus {
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.input-focus:focus {
+  border-color: var(--purple);
+  box-shadow: 0 0 0 3px rgba(157, 79, 158, 0.2);
+  outline: none;
+}
+
+/* Score counter smooth */
+@keyframes countUp {
+  from { opacity: 0; transform: scale(0.5); }
+  to { opacity: 1; transform: scale(1); }
+}
+.score-pop {
+  animation: countUp 0.3s ease-out;
+}
+
+/* Timeline dot pulse */
+@keyframes dotPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(157, 79, 158, 0.4); }
+  50% { box-shadow: 0 0 0 8px rgba(157, 79, 158, 0); }
+}
+.timeline-dot {
+  animation: dotPulse 2s ease-in-out infinite;
+}
+
+/* Card hover */
+.audit-card {
+  transition: border-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+}
+.audit-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+.audit-card.checked {
+  border-color: var(--purple);
+  box-shadow: 0 0 20px rgba(157, 79, 158, 0.15);
+}
+
+/* Template field groups */
+.field-always { border-left: 3px solid #22c55e; }
+.field-never { border-left: 3px solid #ef4444; }
+.field-exception { border-left: 3px solid var(--accent-gold); }

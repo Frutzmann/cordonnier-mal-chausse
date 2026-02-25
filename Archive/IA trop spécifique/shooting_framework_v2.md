@@ -1,5 +1,5 @@
-# SHOOTING FRAMEWORK V2
-## "Process Unique ? L'IA s'en fiche"
+# SHOOTING FRAMEWORK V3
+## "Ton process est unique ? Pas tant que ça."
 
 ---
 
@@ -12,9 +12,9 @@
 
 ## TITRES (A/B test)
 
-1. **J'ai testé l'IA sur un process chaotique** (42 car.)
-2. **Cette IA s'adapte à n'importe quel process** (45 car.)
-3. **Ton process est unique ? L'IA s'en fiche** (41 car.)
+1. **J'ai testé l'IA sur un process chaotique** (42 car.) ✅ inchangé
+2. **Ton process "unique" ? Il est identique à 80%** (44 car.) 🔄 modifié
+3. **Ton process est unique ? Pas tant que ça** (40 car.) 🔄 modifié
 
 ## MINIATURE
 
@@ -136,63 +136,67 @@ La démo est le moment où tu perds ou tu gagnes. Tips spécifiques :
 
 ## RETAIN — PIVOT (60-120 sec)
 
-**Objectif** : Détruire la croyance par le vécu. Pas une leçon.
+**Objectif** : Détruire la croyance. La révélation : ton process n'est PAS aussi unique que tu le crois.
 
 **Ce que tu dis** :
 
-> Pendant longtemps j'ai pensé la même chose. Que pour automatiser, il fallait que tout soit carré. Standardisé. Identique. Et puis j'ai compris un truc.
+> Pendant longtemps j'ai pensé la même chose. Chaque process est unique. Chaque cas est différent. Impossible à automatiser.
 >
-> Le problème c'était pas que mes process étaient trop spécifiques. C'est que les outils d'avant étaient trop bêtes. Ils suivaient des règles. Si A alors B. Point. La moindre exception, c'était fini.
+> Et puis j'ai regardé de plus près. J'ai comparé des dizaines de process dans des boîtes complètement différentes. Et j'ai découvert un truc.
 >
-> Sauf que l'IA, elle fonctionne pas comme ça. L'IA, elle COMPREND le contexte. Tu lui donnes un document qu'elle n'a jamais vu, elle sait quoi en faire. Pas parce qu'on lui a codé 200 règles. Parce qu'elle comprend ce qu'elle lit.
+> 80% c'est exactement la même chose partout. Recevoir un document. En extraire des infos. Les mettre au bon endroit. Vérifier que rien ne manque. Le même schéma, encore et encore.
 >
-> Et ça change tout. Laisse-moi te montrer.
+> Le spécifique, le vrai, c'est 20%. Et ces 20%, c'est là que TOI tu dois bosser. Mais les 80% de bruit autour ? L'IA les fait mieux et plus vite que n'importe qui.
+>
+> Laisse-moi te montrer.
 
 **Ce qu'on voit** :
-- Slide comparaison : Outils d'avant (règles rigides) VS IA + Automatisation (comprend le contexte)
+- Slide barre 80/20 (déplacée ICI depuis la Démo)
 - Ton visage — regard caméra
 
 **Boucle ouverte** : "Laisse-moi te montrer" → la preuve arrive
 
 **Notes de tournage** :
 - Le ton change ici : passer de l'énergie du constat (Fissure) à un ton plus posé, presque confidentiel
-- "Et puis j'ai compris un truc" = moment de pivot. Pause. Regarder la caméra.
-- Le mot "comprend" revient 2 fois — c'est voulu. C'est le concept clé.
+- "Et j'ai découvert un truc" = moment de pivot. Pause. Regarder la caméra.
+- Le 80/20 est maintenant ICI, pas dans la Démo. C'est l'INSIGHT. La Démo sera la PREUVE.
 
-**⚡ Rétention** : Le Pivot est la charnière. Risque de décrochage si le ton reste le même que la Fissure. Change physiquement quelque chose : rapproche-toi de la caméra, baisse le volume, ralentis. Le viewer doit SENTIR qu'on passe à autre chose. "Et puis j'ai compris un truc" → 1 seconde de silence → reprends. Ce silence est de l'or.
+**⚡ Rétention** : Le Pivot est la charnière. Risque de décrochage si le ton reste le même que la Fissure. Change physiquement quelque chose : rapproche-toi de la caméra, baisse le volume, ralentis. Le viewer doit SENTIR qu'on passe à autre chose. "Et j'ai découvert un truc" → 1 seconde de silence → reprends. Ce silence est de l'or.
 
 ---
 
 ## RETAIN — DÉMO (120-300 sec)
 
-**Objectif** : Prouver. Montrer juste assez. Pas un tuto.
+**Objectif** : Prouver le 80/20. 5 fichiers différents → même résultat = le process est le même partout.
 
 **Ce que tu dis** :
 
-> Voilà ce que j'ai construit. Je prends 5 documents complètement différents — un PDF structuré, un scan de facture tordu, un email avec des infos en vrac, un tableau Excel mal foutu, et un ticket de caisse en photo.
+> Voilà ce que j'ai construit. Je prends 5 factures. Pas 5 factures propres. 5 factures qui n'ont RIEN à voir entre elles — un PDF structuré, un scan tordu, un CSV brut, un Google Sheet, et une photo de ticket.
 >
-> Je les envoie tous dans le même système. Pas 5 systèmes. UN.
+> 5 sources différentes. 5 formats différents. Je les envoie toutes dans le même système. UN seul.
 >
-> [Montrer le process en live]
+> [Montrer le process en live — accélérer au montage]
 >
-> L'IA lit chaque document. Elle comprend le contexte. Elle extrait les bonnes informations. Et elle les classe dans le même format de sortie. Pas de règle par type de document. Pas de template par format. Elle s'adapte.
+> Et voilà le résultat. Le même tableau. Les mêmes colonnes. Peu importe d'où vient le document.
 >
-> Et voilà le truc que personne ne dit : 80% de ce que tu crois unique dans ton process, c'est identique à celui du voisin. Le spécifique, le vrai, c'est 20%. Et c'est exactement LÀ que toi, l'humain, tu dois bosser. L'IA te dégage les 80% de bruit pour que tu te concentres sur les 20% qui comptent.
+> Tu vois ce qui vient de se passer ? 5 formats "uniques"... et pourtant les mêmes infos extraites, classées, rangées de la même façon. Parce que derrière le chaos visuel, c'est le même process. Numéro de facture, date, montant, client. Toujours pareil.
+>
+> C'est ça les 80%.
 
 **Ce qu'on voit** :
 - Le workflow n8n (vue rapide, pas de config détaillée)
-- Les 5 documents qui entrent un par un
-- Les résultats qui sortent propres
-- Slide barre 80/20
+- Les 5 documents un par un (montrer le bordel AVANT)
+- Le résultat dans Airtable (montrer l'ordre APRÈS)
+- Ton visage face caméra pour "C'est ça les 80%"
 
 **Notes de tournage** :
 - C'est ICI et UNIQUEMENT ICI que n8n apparaît. Pas avant. Jamais en titre/hook.
 - Alterner : ton visage → écran workflow → document qui entre → résultat → ton visage. Changer toutes les 20-30 secondes.
-- La démo doit être FLUIDE. Si ça bug, re-tourne. Le viewer doit voir que ça marche sans friction.
-- Ne PAS expliquer comment reconstruire le workflow. Montrer QUE ça marche et POURQUOI.
-- Le 80/20 est le climax intellectuel. Ralentir dessus. C'est la phrase que le viewer doit retenir.
+- La démo doit être FLUIDE. Si ça bug, re-tourne.
+- Ne PAS expliquer comment reconstruire le workflow. Montrer QUE ça marche.
+- "C'est ça les 80%" = la phrase de conclusion de la Démo. Elle connecte la preuve à l'insight du Pivot.
 
-**⚡ Rétention** : La démo est le désert de la rétention si tu la gères mal. 3 règles vitales : (1) Annonce combien de documents AVANT de commencer → "5 documents, regarde bien" crée un compteur mental. Le viewer reste pour voir les 5. (2) Ajoute un mini-suspense sur le document le plus bordélique → "Et celui-là... honnêtement j'étais pas sûr que ça passerait." (3) Accélère TOUT ce qui est technique au montage. Le viewer veut voir input → output, pas les étapes entre les deux.
+**⚡ Rétention** : La démo est le désert de la rétention si tu la gères mal. 3 règles vitales : (1) Annonce "5 factures" AVANT de commencer → compteur mental. Le viewer reste pour voir les 5. (2) Ajoute un mini-suspense sur le document le plus bordélique → "Et celui-là... honnêtement j'étais pas sûr que ça passerait." (3) Accélère TOUT ce qui est technique au montage. Le viewer veut voir input → output, pas les étapes entre les deux.
 
 ---
 
@@ -202,7 +206,7 @@ La démo est le moment où tu perds ou tu gagnes. Tips spécifiques :
 
 **Ce que tu dis** :
 
-> Ton process est unique ? Peut-être. Mais l'IA s'en fiche. Elle s'adapte à ce qu'elle reçoit. Et les 24 000€ par an que tu crames en travail de machine, tu peux les récupérer.
+> Ton process est unique ? Peut-être à 20%. Mais les 80% restants, l'IA les gère déjà. Et les 24 000€ par an que tu crames sur ces 80%, tu peux les récupérer.
 >
 > Le workflow que tu viens de voir, je l'ai mis en template. Le lien est dans la description. Tu le télécharges, tu l'importes, tu testes avec tes propres documents.
 >
