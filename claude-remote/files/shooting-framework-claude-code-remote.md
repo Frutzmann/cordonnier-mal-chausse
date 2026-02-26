@@ -229,11 +229,31 @@
    - On ne peut pas DÉMARRER une nouvelle session depuis le téléphone — seulement continuer une session existante
    - C'est un research preview — il y a des bugs
 
-4. **⚠️ SÉCURITÉ :**
-   - NE PAS partager l'URL de session ou le QR code
-   - N'importe qui avec le lien peut accéder à tes fichiers locaux
-   - Pas de 2FA sur la connexion remote
-   - Insister : "Quand vous avez fini, tuez la session"
+4. **⚠️ DISCLAIMER CYBERSÉCURITÉ — Surface d'attaque de Remote Control :**
+
+   **Ce que tu ouvres quand tu actives Remote Control :**
+   > "Cette feature est puissante. Mais il faut comprendre ce qu'on expose."
+
+   | Risque | Impact | Mitigation |
+   |--------|--------|------------|
+   | **URL de session = clé d'accès totale** | N'importe qui avec le lien lit/écrit/supprime tes fichiers locaux | Ne JAMAIS partager l'URL ou le QR code. Pas par Slack, pas par email, pas en screenshot |
+   | **Pas de 2FA** | Aucune vérification d'identité au-delà du lien. Pas de code SMS, pas de biométrie | Considérer le lien comme un mot de passe root |
+   | **MCP servers exposés à distance** | Depuis le téléphone, l'agent accède à TOUS tes MCP : Airtable, bases de données, APIs, GitHub... | Auditer quels MCP sont connectés AVANT d'activer Remote Control. Désactiver ceux qui ne sont pas nécessaires |
+   | **Relay via Anthropic** | Tes instructions transitent par l'API Anthropic (chiffrées TLS, mais pas E2E) | Ne pas envoyer de secrets (mots de passe, tokens API) dans le chat Remote |
+   | **Session persistante** | Le terminal reste ouvert et actif tant que tu ne le tues pas. Si ton ordi est compromis, la session aussi | Tuer la session avec `Ctrl+C` dès que tu as fini. Ne pas laisser tourner la nuit |
+   | **Pas d'audit trail séparé** | Impossible de distinguer ce qui a été fait en local vs en remote dans les logs | Vérifier le `git diff` après une session remote |
+   | **Research preview** | Pas de SLA sécurité, pas de pentest publié, pas de bug bounty dédié | Ne pas utiliser sur des projets clients sensibles ou des environnements de production |
+
+   **Phrase à dire en vidéo :**
+   > "Remote Control, c'est comme donner les clés de ton bureau à distance. C'est pratique, mais si tu laisses la porte ouverte, n'importe qui entre. Le lien de session = accès root à ta machine. Ne le partagez JAMAIS."
+
+   **Bonnes pratiques à afficher à l'écran (bullet points rapides) :**
+   - Tuer la session quand c'est fini (`Ctrl+C`)
+   - Ne jamais screenshot le QR code
+   - Auditer tes MCP connectés avant d'activer
+   - Ne pas envoyer de secrets dans le chat
+   - Pas de Remote Control sur un projet prod/client sensible
+   - Vérifier `git log` / `git diff` après chaque session
 
 5. **Remote Control vs Claude Code on the web :**
    - Remote Control = LOCAL (tes fichiers, tes MCP, ton contexte)
