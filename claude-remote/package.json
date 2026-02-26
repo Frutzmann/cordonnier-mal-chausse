@@ -1,0 +1,11 @@
+{
+  "name": "client-health-dashboard",
+  "version": "1.0.0",
+  "description": "Dashboard CLI — score de santé clients (L'Atelier de l'Automatisation)",
+  "main": "src/dashboard.js",
+  "scripts": {
+    "start": "node src/dashboard.js"
+  },
+  "keywords": ["dashboard", "clients", "cli"],
+  "license": "MIT"
+}

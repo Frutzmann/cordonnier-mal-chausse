@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code Remote Control — Slides Video</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #011638;
+    --purple: #9D4F9E;
+    --purple-glow: rgba(157, 79, 158, 0.3);
+    --light: #EEF0F2;
+    --red: #E63946;
+    --teal: #2EC4B6;
+    --gold: #F4A261;
+    --dark: #0a0e1a;
+    --gray: #8892A4;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Space Grotesk', sans-serif;
+    background: var(--dark);
+    color: var(--light);
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  /* ====== SLIDE ENGINE: opacity + transform ====== */
+  .slides-container {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .slide.active {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: all;
+  }
+
+  /* ====== BACKGROUND GRID (all slides) ====== */
+  .slide-grid-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(rgba(157,79,158,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(157,79,158,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .slide > *:not(.slide-grid-overlay) {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ====== PROGRESS BAR ====== */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    z-index: 200;
+    background: linear-gradient(90deg, var(--purple), var(--teal));
+    transition: width 0.4s ease;
+    width: 14.28%;
+  }
+
+  /* ====== STAGGERED ANIMATIONS ====== */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(25px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .slide.active .anim-1 { animation: fadeUp 0.6s 0.1s ease-out both; }
+  .slide.active .anim-2 { animation: fadeUp 0.6s 0.25s ease-out both; }
+  .slide.active .anim-3 { animation: fadeUp 0.6s 0.4s ease-out both; }
+  .slide.active .anim-4 { animation: fadeUp 0.6s 0.55s ease-out both; }
+  .slide.active .anim-5 { animation: fadeUp 0.6s 0.7s ease-out both; }
+
+  .slide:not(.active) [class*="anim-"] {
+    opacity: 0;
+  }
+
+  /* ====== NAVIGATION BAR ====== */
+  .nav-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 40px;
+    background: linear-gradient(to top, rgba(10,14,26,0.85), transparent);
+  }
+
+  .nav-counter {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--gray);
+    letter-spacing: 2px;
+    min-width: 70px;
+  }
+
+  .nav-dots {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .nav-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .nav-dot:hover {
+    transform: scale(1.4);
+    background: rgba(255,255,255,0.35);
+  }
+
+  .nav-dot.active {
+    background: var(--purple);
+    width: 20px;
+    border-radius: 4px;
+    box-shadow: 0 0 10px var(--purple-glow);
+  }
+
+  .nav-hint {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--gray);
+    opacity: 0.4;
+    letter-spacing: 1px;
+    min-width: 70px;
+    text-align: right;
+  }
+
+  /* ====== MICRO-INTERACTION HOVERS ====== */
+  .step,
+  .schema-box,
+  .compare-card,
+  .limit-item,
+  .verdict-item,
+  .stat-card {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .step:hover,
+  .schema-box:hover,
+  .compare-card:hover,
+  .limit-item:hover,
+  .verdict-item:hover,
+  .stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+  }
+
+  .stat-number {
+    transition: text-shadow 0.25s ease;
+  }
+
+  .stat-card:hover .stat-number {
+    text-shadow: 0 0 20px currentColor;
+  }
+
+  /* Schema arrow pulse */
+  @keyframes arrowPulse {
+    0%, 100% { opacity: 0.25; }
+    50% { opacity: 0.6; }
+  }
+
+  .schema-arrow {
+    animation: arrowPulse 2.5s ease-in-out infinite;
+  }
+
+  /* ====== SLIDE 1: TITRE ====== */
+  .slide-title {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--dark);
+    text-align: center;
+  }
+  .slide-title::before {
+    content: '';
+    position: absolute;
+    top: -200px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(157,79,158,0.15) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .slide-title::after {
+    content: '';
+    position: absolute;
+    bottom: -200px;
+    right: -100px;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(46,196,182,0.1) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  /* Grid for slide 1 handled by .slide-grid-overlay div */
+
+  .badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--teal);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    opacity: 0.8;
+  }
+  .slide-title h1 {
+    font-size: 52px;
+    font-weight: 700;
+    line-height: 1.15;
+    max-width: 900px;
+    background: linear-gradient(135deg, var(--light) 0%, rgba(238,240,242,0.7) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .slide-title h1 span {
+    background: linear-gradient(135deg, var(--purple) 0%, var(--teal) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .subtitle {
+    font-size: 20px;
+    color: rgba(238,240,242,0.5);
+    margin-top: 20px;
+    font-weight: 400;
+  }
+
+  /* ====== SLIDE 2: C'EST QUOI ====== */
+  .slide-what {
+    flex-direction: column;
+    justify-content: center;
+    padding: 40px 100px;
+    background: var(--dark);
+    position: relative;
+  }
+  .slide-what::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 400px;
+    height: 100%;
+    background: linear-gradient(90deg, transparent 0%, rgba(157,79,158,0.05) 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Typographic polish: section-label */
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--purple);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    border-left: 3px solid var(--purple);
+    padding-left: 12px;
+  }
+
+  .slide-what h2 {
+    font-size: 40px;
+    font-weight: 700;
+    margin-bottom: 50px;
+    line-height: 1.2;
+  }
+  .schema {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin-top: 10px;
+  }
+  .schema-box {
+    padding: 28px 36px;
+    border-radius: 12px;
+    text-align: center;
+    position: relative;
+  }
+  .schema-box.device {
+    background: rgba(157,79,158,0.12);
+    border: 1px solid rgba(157,79,158,0.3);
+  }
+  .schema-box.cloud {
+    background: rgba(46,196,182,0.08);
+    border: 1px solid rgba(46,196,182,0.25);
+  }
+  .schema-box.local {
+    background: rgba(244,162,97,0.1);
+    border: 1px solid rgba(244,162,97,0.3);
+  }
+  .schema-box .icon { font-size: 36px; margin-bottom: 8px; }
+  .schema-box .label {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .schema-box .desc {
+    font-size: 12px;
+    color: rgba(238,240,242,0.5);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .schema-arrow {
+    font-size: 28px;
+    color: rgba(238,240,242,0.25);
+    padding: 0 20px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Key-point with backdrop blur */
+  .key-point {
+    margin-top: 40px;
+    padding: 16px 24px;
+    background: rgba(46,196,182,0.08);
+    border-left: 3px solid var(--teal);
+    border-radius: 0 8px 8px 0;
+    font-size: 16px;
+    color: rgba(238,240,242,0.8);
+    max-width: 700px;
+    backdrop-filter: blur(8px);
+  }
+  .key-point strong { color: var(--teal); }
+
+  /* ====== SLIDE 3: CHIFFRES ====== */
+  .slide-stats {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--dark);
+    text-align: center;
+    gap: 60px;
+  }
+  .slide-stats h2 {
+    font-size: 36px;
+    font-weight: 700;
+  }
+  .stats-grid {
+    display: flex;
+    gap: 60px;
+    justify-content: center;
+  }
+  .stat-card {
+    text-align: center;
+    position: relative;
+    padding: 20px;
+    border-radius: 12px;
+  }
+  .stat-number {
+    font-size: 64px;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+  .stat-number.purple { color: var(--purple); }
+  .stat-number.teal { color: var(--teal); }
+  .stat-number.gold { color: var(--gold); }
+  .stat-label {
+    font-size: 15px;
+    color: rgba(238,240,242,0.6);
+    max-width: 180px;
+    line-height: 1.4;
+  }
+  .stat-source {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: rgba(238,240,242,0.25);
+    margin-top: 8px;
+  }
+
+  /* ====== SLIDE 4: SETUP — terminal style code blocks ====== */
+  .slide-setup {
+    flex-direction: column;
+    justify-content: center;
+    padding: 40px 100px;
+    background: var(--dark);
+  }
+  .slide-setup h2 {
+    font-size: 38px;
+    font-weight: 700;
+    margin-bottom: 50px;
+  }
+  .steps {
+    display: flex;
+    gap: 30px;
+  }
+  .step {
+    flex: 1;
+    padding: 30px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    position: relative;
+  }
+  .step-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 48px;
+    font-weight: 700;
+    color: rgba(157,79,158,0.2);
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    line-height: 1;
+  }
+  .step-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: var(--light);
+  }
+
+  /* Terminal-style code blocks */
+  .step code {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    background: rgba(0,0,0,0.4);
+    color: var(--teal);
+    padding: 6px 12px;
+    border-radius: 4px;
+    margin-top: 4px;
+    position: relative;
+  }
+
+  /* $ prefix on command codes (not .label elements) */
+  .step code.cmd::before {
+    content: '$ ';
+    color: rgba(238,240,242,0.35);
+  }
+
+  /* Blinking cursor on first code block */
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  .step code.cmd-cursor::after {
+    content: '\25CB';
+    animation: blink 1s step-end infinite;
+    margin-left: 2px;
+    color: var(--teal);
+  }
+
+  .step-desc {
+    font-size: 14px;
+    color: rgba(238,240,242,0.5);
+    line-height: 1.5;
+    margin-top: 8px;
+  }
+  .step-desc code {
+    font-size: 12px;
+    padding: 2px 8px;
+  }
+
+  /* ====== SLIDE 5: REMOTE VS WEB ====== */
+  .slide-compare {
+    flex-direction: column;
+    justify-content: center;
+    padding: 40px 100px;
+    background: var(--dark);
+  }
+  .slide-compare h2 {
+    font-size: 38px;
+    font-weight: 700;
+    margin-bottom: 50px;
+  }
+  .compare-grid {
+    display: flex;
+    gap: 40px;
+  }
+  .compare-card {
+    flex: 1;
+    padding: 36px;
+    border-radius: 14px;
+    position: relative;
+  }
+  .compare-card.remote {
+    background: linear-gradient(135deg, rgba(157,79,158,0.1) 0%, rgba(157,79,158,0.03) 100%);
+    border: 1px solid rgba(157,79,158,0.25);
+  }
+  .compare-card.web {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .compare-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    display: inline-block;
+  }
+  .compare-card.remote .compare-tag {
+    color: var(--purple);
+    background: rgba(157,79,158,0.15);
+  }
+  .compare-card.web .compare-tag {
+    color: rgba(238,240,242,0.4);
+    background: rgba(255,255,255,0.06);
+  }
+  .compare-card h3 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    font-weight: 700;
+  }
+  .compare-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .compare-list li {
+    font-size: 15px;
+    color: rgba(238,240,242,0.7);
+    padding-left: 24px;
+    position: relative;
+    line-height: 1.4;
+  }
+  .compare-list li::before {
+    content: '\2192';
+    position: absolute;
+    left: 0;
+    color: var(--purple);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .compare-card.web .compare-list li::before { color: rgba(238,240,242,0.25); }
+
+  /* ====== SLIDE 6: LIMITES ====== */
+  .slide-limits {
+    flex-direction: column;
+    justify-content: center;
+    padding: 40px 100px;
+    background: var(--dark);
+  }
+  .slide-limits h2 {
+    font-size: 38px;
+    font-weight: 700;
+    margin-bottom: 50px;
+  }
+  .limits-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .limit-item {
+    padding: 22px 28px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .limit-icon {
+    font-size: 22px;
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+  }
+  .limit-icon.warn { background: rgba(230,57,70,0.12); }
+  .limit-icon.info { background: rgba(244,162,97,0.12); }
+  .limit-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .limit-desc {
+    font-size: 13px;
+    color: rgba(238,240,242,0.45);
+    line-height: 1.4;
+  }
+
+  /* Security warning with pulse animation */
+  @keyframes securityPulse {
+    0%, 100% { border-color: rgba(230,57,70,0.2); }
+    20% { border-color: rgba(230,57,70,0.5); }
+    40% { border-color: rgba(230,57,70,0.5); }
+    60% { border-color: rgba(230,57,70,0.2); }
+  }
+
+  .security-warning {
+    margin-top: 30px;
+    padding: 18px 24px;
+    background: rgba(230,57,70,0.06);
+    border: 1px solid rgba(230,57,70,0.2);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 15px;
+    color: rgba(238,240,242,0.8);
+    animation: securityPulse 3s ease-in-out infinite;
+  }
+  .security-warning strong { color: var(--red); }
+
+  /* ====== SLIDE 7: VERDICT ====== */
+  .slide-verdict {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--dark);
+    text-align: center;
+  }
+  .slide-verdict::before {
+    content: '';
+    position: absolute;
+    width: 800px;
+    height: 800px;
+    background: radial-gradient(circle, rgba(46,196,182,0.06) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .slide-verdict::after {
+    content: '';
+    position: absolute;
+    top: -100px;
+    right: -100px;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(157,79,158,0.08) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .verdict-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--teal);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .slide-verdict h2 {
+    font-size: 44px;
+    font-weight: 700;
+    max-width: 800px;
+    line-height: 1.25;
+    margin-bottom: 40px;
+  }
+
+  /* Gradient text on "game changer" */
+  .slide-verdict h2 .game-changer {
+    background: linear-gradient(135deg, var(--teal), var(--purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .verdict-row {
+    display: flex;
+    gap: 40px;
+    margin-top: 10px;
+  }
+  .verdict-item {
+    padding: 24px 32px;
+    border-radius: 12px;
+    text-align: left;
+    max-width: 320px;
+  }
+  .verdict-item.pro {
+    background: rgba(46,196,182,0.06);
+    border: 1px solid rgba(46,196,182,0.2);
+  }
+  .verdict-item.con {
+    background: rgba(244,162,97,0.06);
+    border: 1px solid rgba(244,162,97,0.2);
+  }
+  .verdict-item h4 {
+    font-size: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 12px;
+    letter-spacing: 1px;
+  }
+  .verdict-item.pro h4 { color: var(--teal); }
+  .verdict-item.con h4 { color: var(--gold); }
+  .verdict-item p {
+    font-size: 15px;
+    color: rgba(238,240,242,0.65);
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+
+<!-- PROGRESS BAR -->
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="slides-container">
+
+<!-- SLIDE 1: TITRE -->
+<div class="slide slide-title active" id="slide-0">
+  <div class="slide-grid-overlay"></div>
+  <div class="badge anim-1">NOUVELLE FEATURE — FEV. 2026</div>
+  <h1 class="anim-2">Claude Code<br><span>Remote Control</span></h1>
+  <div class="subtitle anim-3">Pilote ton agent IA depuis ton telephone</div>
+</div>
+
+<!-- SLIDE 2: C'EST QUOI -->
+<div class="slide slide-what" id="slide-1">
+  <div class="slide-grid-overlay"></div>
+  <div class="section-label anim-1">Bloc 2 — C'est quoi</div>
+  <h2 class="anim-2">Comment ca fonctionne</h2>
+  <div class="schema anim-3">
+    <div class="schema-box device">
+      <div class="icon">📱</div>
+      <div class="label">Ton telephone</div>
+      <div class="desc">Interface / fenetre</div>
+    </div>
+    <div class="schema-arrow">&#8596;</div>
+    <div class="schema-box cloud">
+      <div class="icon">☁️</div>
+      <div class="label">API Anthropic</div>
+      <div class="desc">Pont chiffre TLS</div>
+    </div>
+    <div class="schema-arrow">&#8596;</div>
+    <div class="schema-box local">
+      <div class="icon">💻</div>
+      <div class="label">Ton ordi (local)</div>
+      <div class="desc">Fichiers · MCP · Contexte</div>
+    </div>
+  </div>
+  <div class="key-point anim-4">
+    <strong>Tout reste en local.</strong> Tes fichiers ne bougent jamais. Le telephone est juste une telecommande — ton ordi fait le travail.
+  </div>
+</div>
+
+<!-- SLIDE 3: CHIFFRES -->
+<div class="slide slide-stats" id="slide-2">
+  <div class="slide-grid-overlay"></div>
+  <div class="section-label anim-1">Bloc 2 — Contexte</div>
+  <h2 class="anim-2">Claude Code en chiffres</h2>
+  <div class="stats-grid anim-3">
+    <div class="stat-card">
+      <div class="stat-number purple">$2.5B</div>
+      <div class="stat-label">Run rate annualise</div>
+      <div class="stat-source">VentureBeat, fev. 2026</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number teal">29M</div>
+      <div class="stat-label">Installs VS Code</div>
+      <div class="stat-source">Anthropic</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number gold">41%</div>
+      <div class="stat-label">du code ecrit par l'IA</div>
+      <div class="stat-source">Industry data, 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 4: SETUP -->
+<div class="slide slide-setup" id="slide-3">
+  <div class="slide-grid-overlay"></div>
+  <div class="section-label anim-1">Bloc 3 — Setup</div>
+  <h2 class="anim-2">3 etapes. 2 minutes.</h2>
+  <div class="steps anim-3">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-title">Lancer la commande</div>
+      <code class="cmd cmd-cursor">claude remote-control</code>
+      <div class="step-desc">Depuis ton terminal, dans ton dossier projet. Ou <code class="cmd">/rc</code> depuis une session existante.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-title">Scanner le QR code</div>
+      <code>spacebar → QR</code>
+      <div class="step-desc">Avec l'app Claude (iOS/Android) ou ouvre l'URL dans un navigateur.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-title">Connecte.</div>
+      <code>synchro active</code>
+      <div class="step-desc">Meme conversation. Meme contexte. Meme filesystem. Depuis ton telephone.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 5: REMOTE VS WEB -->
+<div class="slide slide-compare" id="slide-4">
+  <div class="slide-grid-overlay"></div>
+  <div class="section-label anim-1">Bloc 5 — Comparaison</div>
+  <h2 class="anim-2">Remote Control vs Claude Code Web</h2>
+  <div class="compare-grid anim-3">
+    <div class="compare-card remote">
+      <div class="compare-tag">Remote Control</div>
+      <h3>Local → Mobile</h3>
+      <ul class="compare-list">
+        <li>Tourne sur TA machine</li>
+        <li>Acces a tes fichiers locaux</li>
+        <li>Tes MCP servers disponibles</li>
+        <li>Ton contexte projet complet</li>
+        <li>Le telephone = telecommande</li>
+      </ul>
+    </div>
+    <div class="compare-card web">
+      <div class="compare-tag">Claude Code Web</div>
+      <h3>Cloud Anthropic</h3>
+      <ul class="compare-list">
+        <li>Tourne sur les serveurs Anthropic</li>
+        <li>Sandbox Linux isolee</li>
+        <li>Pas d'acces a tes fichiers</li>
+        <li>Pas de MCP locaux</li>
+        <li>Autonome, rien a installer</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 6: LIMITES -->
+<div class="slide slide-limits" id="slide-5">
+  <div class="slide-grid-overlay"></div>
+  <div class="section-label anim-1">Bloc 5 — Limites</div>
+  <h2 class="anim-2">Ce qu'il faut savoir</h2>
+  <div class="limits-grid anim-3">
+    <div class="limit-item">
+      <div class="limit-icon info">💳</div>
+      <div>
+        <div class="limit-title">Plan Pro ou Max requis</div>
+        <div class="limit-desc">Pas de cle API. Pas encore dispo Team/Enterprise.</div>
+      </div>
+    </div>
+    <div class="limit-item">
+      <div class="limit-icon info">💻</div>
+      <div>
+        <div class="limit-title">Ordi allume + terminal ouvert</div>
+        <div class="limit-desc">Si ton ordi dort ou le terminal ferme → session coupee.</div>
+      </div>
+    </div>
+    <div class="limit-item">
+      <div class="limit-icon info">📡</div>
+      <div>
+        <div class="limit-title">Connexion internet requise</div>
+        <div class="limit-desc">~10 min sans reseau = deconnexion auto.</div>
+      </div>
+    </div>
+    <div class="limit-item">
+      <div class="limit-icon info">1️⃣</div>
+      <div>
+        <div class="limit-title">Une seule session remote</div>
+        <div class="limit-desc">Pas de multi-session. Une session par instance.</div>
+      </div>
+    </div>
+  </div>
+  <div class="security-warning anim-4">
+    <span style="font-size:22px;">⚠️</span>
+    <span><strong>Ne partage JAMAIS</strong> l'URL de session ou le QR code. N'importe qui avec le lien accede a tes fichiers locaux.</span>
+  </div>
+</div>
+
+<!-- SLIDE 7: VERDICT -->
+<div class="slide slide-verdict" id="slide-6">
+  <div class="slide-grid-overlay"></div>
+  <div class="verdict-badge anim-1">Verdict</div>
+  <h2 class="anim-2">Research preview.<br>Mais la direction est <span class="game-changer">game changer</span>.</h2>
+  <div class="verdict-row anim-3">
+    <div class="verdict-item pro">
+      <h4>✦ CE QUI IMPRESSIONNE</h4>
+      <p>Setup en 2 min. Synchro parfaite. Acces local complet (fichiers + MCP). L'agent tourne sans toi.</p>
+    </div>
+    <div class="verdict-item con">
+      <h4>✦ CE QUI MANQUE</h4>
+      <p>Pas de demarrage a distance. Une session max. Research preview = bugs possibles. Terminal doit rester ouvert.</p>
+    </div>
+  </div>
+</div>
+
+</div><!-- .slides-container -->
+
+<!-- NAVIGATION BAR -->
+<div class="nav-bar">
+  <div class="nav-counter" id="counter">01 / 07</div>
+  <div class="nav-dots" id="navDots"></div>
+  <div class="nav-hint">← → ou clic</div>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  const counter = document.getElementById('counter');
+  const navDots = document.getElementById('navDots');
+  const progressBar = document.getElementById('progressBar');
+  let current = 0;
+
+  // Build nav dots
+  slides.forEach((_, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+    dot.addEventListener('click', (e) => { e.stopPropagation(); goTo(i); });
+    navDots.appendChild(dot);
+  });
+
+  function goTo(n) {
+    if (n < 0 || n >= total) return;
+
+    slides[current].classList.remove('active');
+    navDots.children[current].classList.remove('active');
+
+    current = n;
+
+    // Re-trigger staggered animations: reset then reflow
+    const animEls = slides[current].querySelectorAll('[class*="anim-"]');
+    animEls.forEach(el => { el.style.animation = 'none'; });
+    void slides[current].offsetHeight;
+    animEls.forEach(el => { el.style.animation = ''; });
+
+    slides[current].classList.add('active');
+    navDots.children[current].classList.add('active');
+    counter.textContent = String(current + 1).padStart(2, '0') + ' / ' + String(total).padStart(2, '0');
+
+    // Progress bar
+    progressBar.style.width = ((current + 1) / total * 100) + '%';
+  }
+
+  // Keyboard navigation
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') {
+      e.preventDefault();
+      goTo(current + 1);
+    }
+    if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      goTo(current - 1);
+    }
+    if (e.key === 'Home') {
+      e.preventDefault();
+      goTo(0);
+    }
+    if (e.key === 'End') {
+      e.preventDefault();
+      goTo(total - 1);
+    }
+  });
+
+  // Click navigation (left half = prev, right half = next)
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('.nav-bar')) return;
+    const x = e.clientX;
+    if (x > window.innerWidth / 2) {
+      goTo(current + 1);
+    } else {
+      goTo(current - 1);
+    }
+  });
+
+  // Touch navigation
+  let touchStartX = 0;
+  document.addEventListener('touchstart', (e) => {
+    touchStartX = e.touches[0].clientX;
+  });
+  document.addEventListener('touchend', (e) => {
+    const diff = touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) {
+      diff > 0 ? goTo(current + 1) : goTo(current - 1);
+    }
+  });
+</script>
+
+</body>
+</html>
