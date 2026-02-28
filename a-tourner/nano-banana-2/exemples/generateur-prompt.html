@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generateur de Prompt pour Miniatures YouTube</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy: #011638;
+      --purple: #9D4F9E;
+      --light-gray: #EEF0F2;
+      --warm-gray: #D5D7DA;
+      --accent-gold: #D4A843;
+      --cyan: #00D4FF;
+      --green: #2ECC71;
+      --orange: #F4A261;
+      --blue: #3B82F6;
+      --slate: #64748B;
+      --pink: #EC4899;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--navy);
+      color: var(--light-gray);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+
+    /* --- Decorative blurred circles --- */
+    .deco-circle {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* --- Fade-in animation --- */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* --- HERO --- */
+    .hero {
+      position: relative;
+      text-align: center;
+      padding: 80px 0 60px;
+      overflow: hidden;
+    }
+    .hero .deco-circle.c1 { width: 400px; height: 400px; background: rgba(157,79,158,0.18); top: -80px; left: -120px; }
+    .hero .deco-circle.c2 { width: 300px; height: 300px; background: rgba(0,212,255,0.12); bottom: -60px; right: -80px; }
+
+    .hero h1 {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--light-gray), var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 16px;
+      position: relative;
+      z-index: 1;
+    }
+    .hero .tagline {
+      font-size: 1.1rem;
+      color: var(--warm-gray);
+      margin-bottom: 40px;
+      position: relative;
+      z-index: 1;
+    }
+    .hero-thumbnails {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
+    }
+    .hero-thumbnails img {
+      width: 280px;
+      max-width: 30%;
+      border-radius: 12px;
+      border: 2px solid rgba(157,79,158,0.5);
+      box-shadow: 0 4px 24px rgba(157,79,158,0.2);
+      transition: transform 0.3s ease;
+    }
+    .hero-thumbnails img:hover { transform: scale(1.03); }
+
+    /* --- HOW IT WORKS --- */
+    .how-section {
+      position: relative;
+      padding: 60px 0;
+    }
+    .how-section .deco-circle.c3 { width: 350px; height: 350px; background: rgba(212,168,67,0.1); top: 0; right: -150px; }
+
+    .section-title {
+      font-size: 1.6rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 40px;
+      position: relative;
+      z-index: 1;
+    }
+    .cards-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+      position: relative;
+      z-index: 1;
+    }
+    .glass-card {
+      background: rgba(26,47,82,0.5);
+      border: 1px solid rgba(255,255,255,0.1);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 16px;
+      padding: 28px 24px;
+    }
+    .glass-card h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: #fff;
+    }
+    .glass-card p {
+      font-size: 0.92rem;
+      color: var(--warm-gray);
+      line-height: 1.55;
+    }
+
+    /* --- FORM --- */
+    .form-section {
+      position: relative;
+      padding: 60px 0 40px;
+    }
+    .form-section .deco-circle.c4 { width: 500px; height: 500px; background: rgba(0,212,255,0.06); top: 200px; left: -200px; }
+    .form-section .deco-circle.c5 { width: 400px; height: 400px; background: rgba(157,79,158,0.08); bottom: 100px; right: -180px; }
+
+    .form-block {
+      background: rgba(26,47,82,0.4);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 24px 28px;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+    }
+    .form-block.border-cyan    { border-left: 4px solid var(--cyan); }
+    .form-block.border-green   { border-left: 4px solid var(--green); }
+    .form-block.border-orange  { border-left: 4px solid var(--orange); }
+    .form-block.border-blue    { border-left: 4px solid var(--blue); }
+    .form-block.border-slate   { border-left: 4px solid var(--slate); }
+    .form-block.border-pink    { border-left: 4px solid var(--pink); }
+
+    .form-block h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .form-block h3 .badge {
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 2px 8px;
+      border-radius: 6px;
+      color: #fff;
+    }
+    .badge-cyan   { background: rgba(0,212,255,0.25); }
+    .badge-green  { background: rgba(46,204,113,0.25); }
+    .badge-orange { background: rgba(244,162,97,0.25); }
+    .badge-blue   { background: rgba(59,130,246,0.25); }
+    .badge-slate  { background: rgba(100,116,139,0.25); }
+    .badge-pink   { background: rgba(236,72,153,0.25); }
+
+    .field-group { margin-bottom: 14px; }
+    .field-group:last-child { margin-bottom: 0; }
+    .field-group label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--warm-gray);
+      margin-bottom: 6px;
+    }
+
+    input[type="text"], textarea, select {
+      width: 100%;
+      background: rgba(26,47,82,0.8);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 12px 14px;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      transition: border-color 0.2s;
+      outline: none;
+    }
+    input[type="text"]:focus, textarea:focus, select:focus {
+      border-color: var(--purple);
+    }
+    textarea { resize: vertical; min-height: 80px; }
+    select { cursor: pointer; appearance: auto; }
+    select option { background: #0a1e3d; color: #fff; }
+
+    .fields-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 600px) {
+      .fields-row { grid-template-columns: 1fr; }
+    }
+
+    /* --- Color swatches --- */
+    .swatch-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .swatch {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 3px solid transparent;
+      cursor: pointer;
+      transition: border-color 0.2s, transform 0.15s;
+      flex-shrink: 0;
+    }
+    .swatch:hover { transform: scale(1.12); }
+    .swatch.selected { border-color: #fff; box-shadow: 0 0 10px rgba(255,255,255,0.3); }
+    .swatch-hex {
+      font-size: 0.78rem;
+      color: var(--warm-gray);
+      font-family: monospace;
+      min-width: 68px;
+    }
+
+    /* --- Output section --- */
+    .output-section {
+      position: relative;
+      padding: 20px 0 60px;
+    }
+    .generate-btn {
+      display: block;
+      width: 100%;
+      max-width: 400px;
+      margin: 0 auto 28px;
+      padding: 16px 32px;
+      background: var(--purple);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: box-shadow 0.3s, transform 0.15s;
+      position: relative;
+      z-index: 1;
+    }
+    .generate-btn:hover {
+      box-shadow: 0 0 30px rgba(157,79,158,0.5);
+      transform: translateY(-1px);
+    }
+    .generate-btn:active { transform: translateY(0); }
+
+    .output-wrapper {
+      position: relative;
+      z-index: 1;
+    }
+    .output-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .output-header span {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--warm-gray);
+    }
+    .copy-btn {
+      padding: 8px 20px;
+      background: rgba(157,79,158,0.3);
+      border: 1px solid rgba(157,79,158,0.5);
+      color: #fff;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .copy-btn:hover { background: rgba(157,79,158,0.5); }
+    .copy-btn.copied { background: rgba(46,204,113,0.4); border-color: rgba(46,204,113,0.6); }
+
+    #promptOutput {
+      width: 100%;
+      min-height: 440px;
+      background: rgba(10,30,61,0.9);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 18px;
+      color: var(--light-gray);
+      font-family: 'Inter', monospace;
+      font-size: 0.82rem;
+      line-height: 1.6;
+      resize: vertical;
+    }
+
+    /* --- CTA --- */
+    .cta-section {
+      position: relative;
+      padding: 60px 0 80px;
+      text-align: center;
+    }
+    .cta-section .deco-circle.c6 { width: 350px; height: 350px; background: rgba(212,168,67,0.1); bottom: -100px; left: -100px; }
+    .cta-card {
+      background: rgba(26,47,82,0.5);
+      border: 1px solid rgba(255,255,255,0.1);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 16px;
+      padding: 40px 32px;
+      max-width: 640px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+    .cta-card h2 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+    .cta-card p {
+      color: var(--warm-gray);
+      font-size: 0.95rem;
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+    .cta-btn {
+      display: inline-block;
+      padding: 14px 32px;
+      background: linear-gradient(135deg, var(--purple), #b86fbf);
+      color: #fff;
+      text-decoration: none;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 1rem;
+      transition: box-shadow 0.3s, transform 0.15s;
+    }
+    .cta-btn:hover {
+      box-shadow: 0 0 24px rgba(157,79,158,0.45);
+      transform: translateY(-1px);
+    }
+
+    /* --- Responsive --- */
+    @media (max-width: 720px) {
+      .hero { padding: 50px 0 40px; }
+      .hero-thumbnails img { max-width: 44%; }
+      .form-block { padding: 18px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==================== HERO ==================== -->
+  <section class="hero">
+    <div class="deco-circle c1"></div>
+    <div class="deco-circle c2"></div>
+    <div class="container fade-in">
+      <h1>Generateur de Prompt pour Miniatures YouTube</h1>
+      <p class="tagline">Remplis les champs. Clique. Copie ton prompt. C'est tout.</p>
+      <div class="hero-thumbnails">
+        <img src="thumbnail_01.png" alt="Exemple miniature 1">
+        <img src="thumbnail_05.png" alt="Exemple miniature 5">
+        <img src="thumbnail_09.png" alt="Exemple miniature 9">
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== COMMENT CA MARCHE ==================== -->
+  <section class="how-section">
+    <div class="deco-circle c3"></div>
+    <div class="container">
+      <h2 class="section-title fade-in">Comment ca marche</h2>
+      <div class="cards-row">
+        <div class="glass-card fade-in">
+          <h3>Le Squelette</h3>
+          <p>Un prompt structure en 9 sections, calibre pour les modeles de generation d'images IA.</p>
+        </div>
+        <div class="glass-card fade-in">
+          <h3>Tes Variables</h3>
+          <p>Tu remplis seulement les champs creatifs. Les sections techniques sont pre-remplies pour toi.</p>
+        </div>
+        <div class="glass-card fade-in">
+          <h3>Copier-Coller</h3>
+          <p>Un clic, ton prompt est pret. Colle-le dans Gemini, Midjourney ou n'importe quel generateur.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== FORM ==================== -->
+  <section class="form-section">
+    <div class="deco-circle c4"></div>
+    <div class="deco-circle c5"></div>
+    <div class="container">
+      <h2 class="section-title fade-in">Construis ton prompt</h2>
+
+      <!-- TASK -->
+      <div class="form-block border-cyan fade-in">
+        <h3><span class="badge badge-cyan">TASK</span> Sujet</h3>
+        <div class="field-group">
+          <label for="taskSubject">Sujet de la video</label>
+          <textarea id="taskSubject" placeholder="Un developpeur qui decouvre une fonctionnalite incroyable"></textarea>
+        </div>
+      </div>
+
+      <!-- CHARACTER -->
+      <div class="form-block border-green fade-in">
+        <h3><span class="badge badge-green">CHARACTER</span> Personnage</h3>
+        <div class="fields-row">
+          <div class="field-group">
+            <label for="charPose">Pose</label>
+            <select id="charPose">
+              <option value="">-- Choisir une pose --</option>
+              <option value="Arms crossed over chest, confident stance, shoulders back.">Bras croises, confiance</option>
+              <option value="One hand on chin, thoughtful expression, head slightly tilted.">Main sur le menton, reflexion</option>
+              <option value="Pointing directly at camera, engaging and assertive.">Pointant vers la camera</option>
+              <option value="Both hands raised, palms open, expression of genuine surprise.">Mains levees, surprise</option>
+              <option value="Leaning on desk with one hand, relaxed and approachable.">Appuye sur un bureau</option>
+              <option value="Holding up an object toward camera, showcasing it prominently.">Tenant un objet</option>
+              <option value="Double thumbs up, enthusiastic smile, positive energy.">Pouces en l'air</option>
+              <option value="Looking over shoulder at camera, mysterious and intriguing.">Regard par-dessus l'epaule</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label for="charExpression">Expression</label>
+            <input type="text" id="charExpression" placeholder="Regard confiant vers la camera">
+          </div>
+        </div>
+      </div>
+
+      <!-- LIGHTING -->
+      <div class="form-block border-orange fade-in">
+        <h3><span class="badge badge-orange">LIGHTING</span> Eclairage</h3>
+        <div class="field-group">
+          <label for="lightKey">Direction key light</label>
+          <select id="lightKey">
+            <option value="">-- Choisir une direction --</option>
+            <option value="Soft, bright key light from directly in front, centered on the face for perfect visibility.">Frontale douce</option>
+            <option value="Key light at 45 degrees from the left, creating a classic Rembrandt triangle on the opposite cheek.">Rembrandt (45 deg)</option>
+            <option value="Hard side light from the right, creating dramatic half-shadow across the face.">Laterale dramatique</option>
+            <option value="Upward light from below chin level, creating dramatic under-shadows.">Par-dessous (horror)</option>
+            <option value="Strong backlight with minimal fill, creating a dramatic silhouette edge.">Contre-jour</option>
+          </select>
+        </div>
+        <div class="fields-row">
+          <div class="field-group">
+            <label>Rim light gauche</label>
+            <input type="hidden" id="rimLeft" value="#9D4F9E">
+            <div class="swatch-group" id="swatchesLeft">
+              <div class="swatch selected" style="background:#9D4F9E" data-color="#9D4F9E" data-target="rimLeft"></div>
+              <div class="swatch" style="background:#00D4FF" data-color="#00D4FF" data-target="rimLeft"></div>
+              <div class="swatch" style="background:#D4A843" data-color="#D4A843" data-target="rimLeft"></div>
+              <div class="swatch" style="background:#E63946" data-color="#E63946" data-target="rimLeft"></div>
+              <div class="swatch" style="background:#2ECC71" data-color="#2ECC71" data-target="rimLeft"></div>
+              <div class="swatch" style="background:#3B82F6" data-color="#3B82F6" data-target="rimLeft"></div>
+              <span class="swatch-hex" id="rimLeftHex">#9D4F9E</span>
+            </div>
+          </div>
+          <div class="field-group">
+            <label>Rim light droite</label>
+            <input type="hidden" id="rimRight" value="#00D4FF">
+            <div class="swatch-group" id="swatchesRight">
+              <div class="swatch" style="background:#9D4F9E" data-color="#9D4F9E" data-target="rimRight"></div>
+              <div class="swatch selected" style="background:#00D4FF" data-color="#00D4FF" data-target="rimRight"></div>
+              <div class="swatch" style="background:#D4A843" data-color="#D4A843" data-target="rimRight"></div>
+              <div class="swatch" style="background:#E63946" data-color="#E63946" data-target="rimRight"></div>
+              <div class="swatch" style="background:#2ECC71" data-color="#2ECC71" data-target="rimRight"></div>
+              <div class="swatch" style="background:#3B82F6" data-color="#3B82F6" data-target="rimRight"></div>
+              <span class="swatch-hex" id="rimRightHex">#00D4FF</span>
+            </div>
+          </div>
+        </div>
+        <div class="field-group" style="margin-top:14px">
+          <label for="lightGlow">Source glow</label>
+          <input type="text" id="lightGlow" placeholder="Ecran d'ordinateur">
+        </div>
+      </div>
+
+      <!-- HERO VISUAL -->
+      <div class="form-block border-blue fade-in">
+        <h3><span class="badge badge-blue">HERO VISUAL</span> Element visuel principal</h3>
+        <div class="field-group">
+          <label for="heroElement">Element principal</label>
+          <input type="text" id="heroElement" placeholder="Un ecran holographique flottant">
+        </div>
+        <div class="fields-row">
+          <div class="field-group">
+            <label for="heroDisposition">Disposition</label>
+            <input type="text" id="heroDisposition" placeholder="Devant le personnage, legerement a droite">
+          </div>
+          <div class="field-group">
+            <label for="heroEffects">Effets</label>
+            <input type="text" id="heroEffects" placeholder="Lueur neon bleue, particules">
+          </div>
+        </div>
+      </div>
+
+      <!-- BACKGROUND -->
+      <div class="form-block border-slate fade-in">
+        <h3><span class="badge badge-slate">BACKGROUND</span> Arriere-plan</h3>
+        <div class="fields-row">
+          <div class="field-group">
+            <label for="bgStyle">Style</label>
+            <select id="bgStyle">
+              <option value="">-- Choisir un style --</option>
+              <option value="Deep dark background, near black with subtle dark navy (#011638) gradient. NO busy elements.">Fond sombre uni</option>
+              <option value="Dark studio environment with neon accent lights (strips and tubes) creating colored reflections.">Studio neon</option>
+              <option value="Blurred modern office/desk setup in the background, bokeh effect, warm ambient light.">Bureau/setup</option>
+              <option value="Abstract technological background with floating geometric shapes, digital particles, and soft glow.">Abstrait tech</option>
+              <option value="Blurred urban cityscape at night, bokeh lights, cinematic depth of field.">Exterieur urbain</option>
+              <option value="Smooth gradient background transitioning between two complementary colors with subtle noise texture.">Gradient colore</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label for="bgDetail">Detail supplementaire</label>
+            <input type="text" id="bgDetail" placeholder="Lignes de code en arriere-plan">
+          </div>
+        </div>
+      </div>
+
+      <!-- COMPOSITION -->
+      <div class="form-block border-pink fade-in">
+        <h3><span class="badge badge-pink">COMPOSITION</span> Cadrage et couleurs</h3>
+        <div class="fields-row">
+          <div class="field-group">
+            <label for="compPosition">Position personnage</label>
+            <select id="compPosition">
+              <option value="">-- Choisir une position --</option>
+              <option value="Character centered, taking up ~40% of frame width.">Centre</option>
+              <option value="Character positioned at the left third of the frame, leaving right side for visual elements.">Tiers gauche</option>
+              <option value="Character positioned at the right third of the frame, leaving left side for visual elements.">Tiers droit</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label for="compPalette">Palette couleurs</label>
+            <select id="compPalette">
+              <option value="">-- Choisir une palette --</option>
+              <option value="Deep dark background vs. Purple (#9D4F9E) / Cyan (#00D4FF) rim lights. High contrast, tech aesthetic.">Purple/Cyan Tech</option>
+              <option value="Teal shadows vs. warm orange highlights. Classic cinematic color grading.">Orange/Teal Cinema</option>
+              <option value="Near-black background with gold (#D4A843) accents. Luxury, premium feel.">Noir/Or Premium</option>
+              <option value="Deep blue (#3B82F6) vs. hot pink (#EC4899). Retro-futuristic vaporwave aesthetic.">Bleu/Rose Vaporwave</option>
+              <option value="Black background with deep red (#E63946) accents. Dramatic, intense mood.">Rouge/Noir Intense</option>
+              <option value="Dark background with green (#2ECC71) highlights. Hacker/code aesthetic.">Vert/Noir Matrix</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== OUTPUT ==================== -->
+  <section class="output-section">
+    <div class="container">
+      <button class="generate-btn fade-in" id="generateBtn" onclick="generatePrompt()">Generer mon prompt</button>
+      <div class="output-wrapper fade-in">
+        <div class="output-header">
+          <span>Prompt genere</span>
+          <button class="copy-btn" id="copyBtn" onclick="copyPrompt()">Copier</button>
+        </div>
+        <textarea id="promptOutput" readonly placeholder="Ton prompt apparaitra ici apres avoir clique sur Generer..."></textarea>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== CTA ==================== -->
+  <section class="cta-section">
+    <div class="deco-circle c6"></div>
+    <div class="container">
+      <div class="cta-card fade-in">
+        <h2>Pour aller plus loin</h2>
+        <p>Tu veux automatiser la generation de miniatures avec n8n + Claude Code ? Un workflow qui genere 10 variantes en un clic, les stocke, et te laisse choisir la meilleure. Reservons un appel pour en discuter.</p>
+        <a href="https://calendly.com/francis-atelier-automatisation/30min" target="_blank" rel="noopener" class="cta-btn">Reserver un appel de 30 min</a>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    /* ===== Color name mapping ===== */
+    var COLOR_NAMES = {
+      '#9D4F9E': 'Purple',
+      '#00D4FF': 'Cyan',
+      '#D4A843': 'Gold',
+      '#E63946': 'Red',
+      '#2ECC71': 'Green',
+      '#3B82F6': 'Blue'
+    };
+
+    function colorLabel(hex) {
+      hex = hex.toUpperCase();
+      var name = COLOR_NAMES[hex] || hex;
+      return name + ' (' + hex + ')';
+    }
+
+    /* ===== Swatch click logic ===== */
+    document.querySelectorAll('.swatch').forEach(function(sw) {
+      sw.addEventListener('click', function() {
+        var targetId = this.dataset.target;
+        var color = this.dataset.color;
+        document.getElementById(targetId).value = color;
+        document.getElementById(targetId + 'Hex').textContent = color;
+        var group = this.closest('.swatch-group');
+        group.querySelectorAll('.swatch').forEach(function(s) { s.classList.remove('selected'); });
+        this.classList.add('selected');
+      });
+    });
+
+    /* ===== FIXED PROMPT SECTIONS ===== */
+    var ROLE_SECTION = [
+      '# ROLE:',
+      'You are a World-Class YouTube Thumbnail Designer & CTR Strategist.',
+      'You specialize in "High-Gloss" Tech aesthetics, mastering the balance',
+      'between vibrant lighting and clean readability.',
+      '',
+      'Resolution: 1280 x 720 pixels'
+    ].join('\n');
+
+    var SKIN_SECTION = [
+      '# SKIN PHYSICS (CRITICAL):',
+      '* **Skin Texture:** Hyper-realistic but "polished." Healthy skin with',
+      '  detailed pores, avoiding the "plastic AI" look.',
+      '* **Natural Tones:** KEEP skin tones natural (beige/tan). DO NOT',
+      '  oversaturate the face with red or heavy orange.',
+      '* **Eyes:** Crystal clear, bright iris, white sclera, with sharp',
+      '  reflections (catchlights). Looking straight at camera.'
+    ].join('\n');
+
+    var NEGATIVE_SECTION = [
+      '# NEGATIVE CONSTRAINTS:',
+      '* NO flat lighting.',
+      '* NO text overlay on the thumbnail.',
+      '* NO oversaturated red skin.',
+      '* NO "blown out" whites.',
+      '* NO cartoonish or unrealistic elements \u2014 keep it photorealistic and cinematic.'
+    ].join('\n');
+
+    var GOAL_SECTION = [
+      '# GOAL:',
+      'A highly clickable, cinematic YouTube thumbnail. The viewer instantly',
+      'understands the video topic. The vibe combines professional quality,',
+      'dramatic lighting, and visual impact \u2014 irresistible to click.'
+    ].join('\n');
+
+    /* ===== GENERATE PROMPT ===== */
+    function val(id) { return document.getElementById(id).value.trim(); }
+    function selVal(id) {
+      var el = document.getElementById(id);
+      return el.options[el.selectedIndex] ? el.options[el.selectedIndex].value : '';
+    }
+
+    function generatePrompt() {
+      var parts = [];
+
+      /* 1. ROLE */
+      parts.push(ROLE_SECTION);
+
+      /* 2. TASK */
+      var task = val('taskSubject');
+      parts.push('# TASK:\nCreate a YouTube thumbnail for: ' + (task || '[Sujet non renseigne]'));
+
+      /* 3. CHARACTER + SKIN PHYSICS */
+      var pose = selVal('charPose');
+      var expression = val('charExpression');
+      var charLines = ['# CHARACTER & SKIN PHYSICS:'];
+      charLines.push('* **Pose:** ' + (pose || '[Non selectionne]'));
+      if (expression) {
+        charLines.push('* **Expression:** ' + expression);
+      }
+      charLines.push('');
+      charLines.push(SKIN_SECTION.replace('# SKIN PHYSICS (CRITICAL):\n', ''));
+      parts.push(charLines.join('\n'));
+
+      /* 4. ADVANCED LIGHTING SETUP */
+      var keyLight = selVal('lightKey');
+      var rimL = val('rimLeft') || '#9D4F9E';
+      var rimR = val('rimRight') || '#00D4FF';
+      var glow = val('lightGlow');
+      var lightLines = ['# ADVANCED LIGHTING SETUP:'];
+      lightLines.push('* **Key Light:** ' + (keyLight || '[Non selectionne]'));
+      lightLines.push('* **Rim Light (Left):** ' + colorLabel(rimL) + ' rim light from the left side, defining the shoulder and jawline.');
+      lightLines.push('* **Rim Light (Right):** ' + colorLabel(rimR) + ' rim light from the right side, creating edge separation from background.');
+      if (glow) {
+        lightLines.push('* **Source Glow:** Subtle ambient glow emanating from ' + glow + '.');
+      }
+      parts.push(lightLines.join('\n'));
+
+      /* 5. HERO VISUAL */
+      var heroEl = val('heroElement');
+      var heroDisp = val('heroDisposition');
+      var heroFx = val('heroEffects');
+      if (heroEl || heroDisp || heroFx) {
+        var heroLines = ['# HERO VISUAL ELEMENT:'];
+        if (heroEl) heroLines.push('* **Element:** ' + heroEl);
+        if (heroDisp) heroLines.push('* **Placement:** ' + heroDisp);
+        if (heroFx) heroLines.push('* **Effects:** ' + heroFx);
+        parts.push(heroLines.join('\n'));
+      }
+
+      /* 6. BACKGROUND */
+      var bgStyle = selVal('bgStyle');
+      var bgDetail = val('bgDetail');
+      var bgLines = ['# BACKGROUND:'];
+      bgLines.push('* **Style:** ' + (bgStyle || '[Non selectionne]'));
+      if (bgDetail) bgLines.push('* **Additional Detail:** ' + bgDetail);
+      parts.push(bgLines.join('\n'));
+
+      /* 7. COMPOSITION & COLOR */
+      var compPos = selVal('compPosition');
+      var compPal = selVal('compPalette');
+      var compLines = ['# COMPOSITION & COLOR PALETTE:'];
+      compLines.push('* **Character Position:** ' + (compPos || '[Non selectionne]'));
+      compLines.push('* **Color Palette:** ' + (compPal || '[Non selectionne]'));
+      parts.push(compLines.join('\n'));
+
+      /* 8. NEGATIVE CONSTRAINTS */
+      parts.push(NEGATIVE_SECTION);
+
+      /* 9. GOAL */
+      parts.push(GOAL_SECTION);
+
+      var output = parts.join('\n\n');
+      document.getElementById('promptOutput').value = output;
+
+      /* Scroll to output */
+      document.getElementById('promptOutput').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    /* ===== COPY TO CLIPBOARD ===== */
+    function copyPrompt() {
+      var text = document.getElementById('promptOutput').value;
+      if (!text) return;
+      var btn = document.getElementById('copyBtn');
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function() {
+          showCopied(btn);
+        }).catch(function() {
+          fallbackCopy(text, btn);
+        });
+      } else {
+        fallbackCopy(text, btn);
+      }
+    }
+
+    function fallbackCopy(text, btn) {
+      var ta = document.getElementById('promptOutput');
+      ta.select();
+      ta.setSelectionRange(0, ta.value.length);
+      try {
+        document.execCommand('copy');
+        showCopied(btn);
+      } catch (e) { /* silent fail */ }
+    }
+
+    function showCopied(btn) {
+      btn.textContent = 'Copie !';
+      btn.classList.add('copied');
+      setTimeout(function() {
+        btn.textContent = 'Copier';
+        btn.classList.remove('copied');
+      }, 2000);
+    }
+
+    /* ===== INTERSECTION OBSERVER (fade-in) ===== */
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.fade-in').forEach(function(el) {
+      observer.observe(el);
+    });
+  </script>
+</body>
+</html>

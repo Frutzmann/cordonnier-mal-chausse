@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anatomie du Prompt Structure</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy: #011638;
+      --purple: #9D4F9E;
+      --light-gray: #EEF0F2;
+      --warm-gray: #D5D7DA;
+      --bg: #0a0f1e;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg);
+      font-family: 'Inter', sans-serif;
+      color: var(--light-gray);
+      min-height: 100vh;
+      padding: 48px 24px;
+    }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    h1 {
+      text-align: center;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+    .subtitle {
+      text-align: center;
+      font-size: 1rem;
+      color: var(--warm-gray);
+      margin-bottom: 40px;
+      font-weight: 400;
+    }
+    .block {
+      display: grid;
+      grid-template-columns: 160px 1fr 260px;
+      gap: 20px;
+      align-items: start;
+      padding: 18px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.02);
+    }
+    .block.fixed-section {
+      background: rgba(255,255,255,0.04);
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      border-left: 3px solid;
+      white-space: nowrap;
+    }
+    .excerpt {
+      font-family: 'Courier New', monospace;
+      font-size: 0.82rem;
+      line-height: 1.6;
+      color: #b0b8c8;
+    }
+    .annotation {
+      font-style: italic;
+      font-size: 0.88rem;
+      color: var(--warm-gray);
+      line-height: 1.5;
+      padding-top: 2px;
+    }
+    .separator {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 24px 20px;
+    }
+    .separator::before, .separator::after {
+      content: '';
+      flex: 1;
+      border-top: 1px dashed rgba(255,255,255,0.15);
+    }
+    .separator span {
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: rgba(255,255,255,0.4);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    /* Badge colors */
+    .badge-role    { background: rgba(157,79,158,0.2);  color: #9D4F9E; border-color: #9D4F9E; }
+    .badge-task    { background: rgba(0,212,255,0.2);   color: #00D4FF; border-color: #00D4FF; }
+    .badge-char    { background: rgba(46,204,113,0.2);  color: #2ECC71; border-color: #2ECC71; }
+    .badge-light   { background: rgba(244,162,97,0.2);  color: #F4A261; border-color: #F4A261; }
+    .badge-hero    { background: rgba(59,130,246,0.2);  color: #3B82F6; border-color: #3B82F6; }
+    .badge-bg      { background: rgba(100,116,139,0.2); color: #64748B; border-color: #64748B; }
+    .badge-comp    { background: rgba(236,72,153,0.2);  color: #EC4899; border-color: #EC4899; }
+    .badge-neg     { background: rgba(230,57,70,0.2);   color: #E63946; border-color: #E63946; }
+    .badge-goal    { background: rgba(212,168,67,0.2);  color: #D4A843; border-color: #D4A843; }
+
+    @media (max-width: 768px) {
+      .block {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+      .annotation { font-style: italic; }
+      h1 { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Anatomie du Prompt Structure</h1>
+    <p class="subtitle">Chaque section a un role precis dans la generation</p>
+
+    <!-- 1. ROLE -->
+    <div class="block">
+      <div><span class="badge badge-role">ROLE</span></div>
+      <div class="excerpt">You are a World-Class YouTube Thumbnail Designer &amp; CTR Strategist...</div>
+      <div class="annotation">Cadre le style et le niveau de qualite</div>
+    </div>
+
+    <!-- 2. TASK -->
+    <div class="block">
+      <div><span class="badge badge-task">TASK</span></div>
+      <div class="excerpt">Create a dramatic thumbnail showing...</div>
+      <div class="annotation">Decrit ce que le modele doit creer</div>
+    </div>
+
+    <!-- 3. CHARACTER -->
+    <div class="block">
+      <div><span class="badge badge-char">CHARACTER</span></div>
+      <div class="excerpt">Pose: Right hand holding up a smartphone...<br>Skin Texture: Hyper-realistic but "polished"...</div>
+      <div class="annotation">Controle le rendu physique du personnage</div>
+    </div>
+
+    <!-- 4. LIGHTING -->
+    <div class="block">
+      <div><span class="badge badge-light">LIGHTING</span></div>
+      <div class="excerpt">Key Light: Soft, bright light...<br>Dual Rim Lights: Purple (#9D4F9E) left, Cyan right...</div>
+      <div class="annotation">Cree la profondeur 3D et le "pop"</div>
+    </div>
+
+    <!-- 5. HERO VISUAL -->
+    <div class="block">
+      <div><span class="badge badge-hero">HERO VISUAL</span></div>
+      <div class="excerpt">8-10 YouTube thumbnails fanned out like a deck of cards...</div>
+      <div class="annotation">L'element cle qui raconte l'histoire</div>
+    </div>
+
+    <!-- 6. BACKGROUND -->
+    <div class="block">
+      <div><span class="badge badge-bg">BACKGROUND</span></div>
+      <div class="excerpt">Deep dark background, near black with subtle dark navy gradient...</div>
+      <div class="annotation">Fond propre = sujet lisible</div>
+    </div>
+
+    <!-- 7. COMPOSITION -->
+    <div class="block">
+      <div><span class="badge badge-comp">COMPOSITION</span></div>
+      <div class="excerpt">Character centered, ~40% of frame. Phone at upper-right.<br>Color palette: Purple/Cyan vs dark...</div>
+      <div class="annotation">Equilibre visuel et harmonie des couleurs</div>
+    </div>
+
+    <!-- Separator -->
+    <div class="separator">
+      <span>Sections fixes (pre-remplies)</span>
+    </div>
+
+    <!-- 8. NEGATIVE -->
+    <div class="block fixed-section">
+      <div><span class="badge badge-neg">NEGATIVE</span></div>
+      <div class="excerpt">NO flat lighting. NO text overlay. NO oversaturated red skin. NO cartoonish elements...</div>
+      <div class="annotation">Empeche les erreurs classiques de l'IA</div>
+    </div>
+
+    <!-- 9. GOAL -->
+    <div class="block fixed-section">
+      <div><span class="badge badge-goal">GOAL</span></div>
+      <div class="excerpt">A highly clickable, cinematic thumbnail. The viewer instantly understands...</div>
+      <div class="annotation">Oriente toute la generation vers le resultat</div>
+    </div>
+  </div>
+</body>
+</html>

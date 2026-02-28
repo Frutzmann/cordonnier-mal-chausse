@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grille Miniatures</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      height: 100%;
+      background: #050a18;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      max-width: 900px;
+      width: 100%;
+      padding: 12px;
+    }
+    .grid img {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      display: block;
+      border: 1px solid rgba(157, 79, 158, 0.3);
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="grid">
+    <img src="thumbnail_01.png" alt="">
+    <img src="thumbnail_02.png" alt="">
+    <img src="thumbnail_03.png" alt="">
+    <img src="thumbnail_04.png" alt="">
+    <img src="thumbnail_05.png" alt="">
+    <img src="thumbnail_06.png" alt="">
+    <img src="thumbnail_07.png" alt="">
+    <img src="thumbnail_08.png" alt="">
+    <img src="thumbnail_09.png" alt="">
+    <img src="thumbnail_10.png" alt="">
+  </div>
+</body>
+</html>

@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'none'" />
+  <meta name="description" content="3 prompts Claude Cowork pour automatiser ta productivite, tes newsletters et ta veille YouTube. Prets a copier-coller." />
+  <meta property="og:title" content="3 prompts pour automatiser tes matinees avec Claude Cowork" />
+  <meta property="og:description" content="Les 3 prompts exacts de la video. Copies-les, configure Claude Desktop, et gagne 45 min par jour." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <title>3 prompts Claude Cowork — L'Atelier Automatisation</title>
+  <style>
+    :root {
+      --purple: #9D4F9E;
+      --purple-light: #C98BCA;
+      --purple-dark: #7A3D7B;
+      --navy: #011638;
+      --navy-light: #1A2F52;
+      --light-gray: #EEF0F2;
+      --warm-gray: #D5D7DA;
+      --accent-gold: #D4A843;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--navy);
+      color: var(--light-gray);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Layout */
+    .container { max-width: 820px; margin: 0 auto; padding: 0 24px; }
+    section { padding: 80px 0; }
+
+    /* Typography */
+    h1 { font-size: 2.5rem; font-weight: 800; color: #fff; line-height: 1.15; }
+    h2 { font-size: 1.875rem; font-weight: 700; color: #fff; margin-bottom: 16px; }
+    h3 { font-size: 1.25rem; font-weight: 600; color: #fff; margin-bottom: 8px; }
+    p { color: var(--warm-gray); }
+
+    .text-purple { color: var(--purple-light); }
+    .text-gold { color: var(--accent-gold); }
+    .text-small { font-size: 0.875rem; }
+    .text-xs { font-size: 0.75rem; }
+    .text-center { text-align: center; }
+
+    /* Fade-in */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Cards glassmorphism */
+    .card {
+      background: rgba(26, 47, 82, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 16px;
+      padding: 32px;
+    }
+
+    /* Badge */
+    .badge {
+      display: inline-block;
+      padding: 4px 14px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .badge-purple { background: rgba(157, 79, 158, 0.2); color: var(--purple-light); border: 1px solid rgba(157, 79, 158, 0.3); }
+    .badge-gold { background: rgba(212, 168, 67, 0.15); color: var(--accent-gold); border: 1px solid rgba(212, 168, 67, 0.3); }
+
+    /* Prompt block */
+    .prompt-block {
+      position: relative;
+      background: rgba(1, 22, 56, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 24px;
+      margin: 24px 0;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .prompt-block pre {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.8125rem;
+      line-height: 1.7;
+      color: var(--light-gray);
+      margin: 0;
+    }
+    .prompt-block::-webkit-scrollbar { width: 6px; }
+    .prompt-block::-webkit-scrollbar-track { background: transparent; }
+    .prompt-block::-webkit-scrollbar-thumb { background: rgba(157, 79, 158, 0.3); border-radius: 3px; }
+
+    /* Copy button */
+    .btn-copy {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: rgba(157, 79, 158, 0.15);
+      border: 1px solid rgba(157, 79, 158, 0.4);
+      border-radius: 10px;
+      color: var(--purple-light);
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+    .btn-copy:hover {
+      background: rgba(157, 79, 158, 0.25);
+      border-color: var(--purple);
+    }
+    .btn-copy.copied {
+      background: rgba(34, 197, 94, 0.15);
+      border-color: rgba(34, 197, 94, 0.4);
+      color: #4ade80;
+    }
+
+    /* WHY blocks */
+    .why-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-top: 32px;
+    }
+    .why-block {
+      background: rgba(26, 47, 82, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .why-block h4 {
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: var(--purple-light);
+      margin-bottom: 6px;
+    }
+    .why-block p {
+      font-size: 0.8125rem;
+      color: var(--warm-gray);
+      line-height: 1.5;
+    }
+
+    /* Stats */
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      margin-top: 40px;
+      flex-wrap: wrap;
+    }
+    .stat { text-align: center; }
+    .stat-number {
+      font-size: 2.25rem;
+      font-weight: 800;
+      color: var(--purple-light);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 0.8125rem;
+      color: var(--warm-gray);
+      margin-top: 4px;
+    }
+
+    /* Scroll nudge */
+    .scroll-nudge {
+      margin-top: 48px;
+      text-align: center;
+      animation: bounce 2s ease-in-out infinite;
+    }
+    .scroll-nudge svg { opacity: 0.4; }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(8px); }
+    }
+
+    /* Timeline */
+    .timeline { position: relative; padding-left: 40px; }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 11px;
+      top: 8px;
+      bottom: 8px;
+      width: 2px;
+      background: rgba(157, 79, 158, 0.3);
+    }
+    .timeline-step {
+      position: relative;
+      margin-bottom: 28px;
+    }
+    .timeline-step:last-child { margin-bottom: 0; }
+    .timeline-dot {
+      position: absolute;
+      left: -40px;
+      top: 4px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--purple);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      color: #fff;
+      box-shadow: 0 0 0 4px rgba(157, 79, 158, 0.15);
+    }
+    .timeline-step h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .timeline-step p {
+      font-size: 0.875rem;
+      color: var(--warm-gray);
+    }
+
+    /* Tips grid */
+    .tips-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    .tip-card {
+      background: rgba(26, 47, 82, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 24px;
+      transition: border-color 0.2s ease;
+    }
+    .tip-card:hover { border-color: rgba(157, 79, 158, 0.3); }
+    .tip-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: rgba(157, 79, 158, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+      font-size: 1.25rem;
+    }
+    .tip-card h4 {
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .tip-card p {
+      font-size: 0.8125rem;
+      color: var(--warm-gray);
+      line-height: 1.5;
+    }
+
+    /* Warning box */
+    .warning-box {
+      background: rgba(212, 168, 67, 0.08);
+      border: 1px solid rgba(212, 168, 67, 0.25);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 32px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .warning-icon { font-size: 1.25rem; flex-shrink: 0; margin-top: 2px; }
+    .warning-box p { color: var(--accent-gold); font-size: 0.875rem; }
+
+    /* CTA button */
+    .btn-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 40px;
+      background: var(--purple);
+      color: #fff;
+      font-size: 1.125rem;
+      font-weight: 700;
+      border-radius: 14px;
+      text-decoration: none;
+      transition: box-shadow 0.3s ease, transform 0.2s ease, background 0.2s ease;
+    }
+    .btn-cta:hover {
+      box-shadow: 0 0 30px rgba(157, 79, 158, 0.5);
+      transform: translateY(-2px);
+      background: var(--purple-dark);
+    }
+
+    /* Divider */
+    .divider {
+      height: 1px;
+      background: rgba(255, 255, 255, 0.06);
+      margin: 0;
+    }
+
+    /* Prompt section problem */
+    .problem {
+      background: rgba(255, 255, 255, 0.03);
+      border-left: 3px solid var(--purple);
+      padding: 16px 20px;
+      border-radius: 0 10px 10px 0;
+      margin-bottom: 20px;
+    }
+    .problem p {
+      font-size: 0.9375rem;
+      color: var(--light-gray);
+      font-style: italic;
+    }
+
+    /* Section number */
+    .section-num {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: rgba(157, 79, 158, 0.5);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      margin-bottom: 8px;
+    }
+
+    /* Footer */
+    footer {
+      padding: 40px 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      text-align: center;
+    }
+    footer p { font-size: 0.75rem; color: rgba(213, 215, 218, 0.3); }
+    footer a {
+      color: rgba(213, 215, 218, 0.4);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    footer a:hover { color: var(--purple-light); }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      h1 { font-size: 1.75rem; }
+      h2 { font-size: 1.5rem; }
+      section { padding: 56px 0; }
+      .stats { gap: 32px; }
+      .stat-number { font-size: 1.75rem; }
+      .tips-grid { grid-template-columns: 1fr; }
+      .why-grid { grid-template-columns: 1fr; }
+      .card { padding: 24px; }
+      .prompt-block { padding: 16px; max-height: 300px; }
+      .btn-cta { padding: 16px 32px; font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===================== SECTION 1 — HERO ===================== -->
+  <section style="padding-top: 100px; padding-bottom: 60px;">
+    <div class="container text-center fade-in">
+      <p class="section-num">Les 3 prompts de la video</p>
+      <h1>
+        J'ai automatise mes <span class="text-purple">3 taches</span><br>
+        les plus chiantes avec Claude Cowork
+      </h1>
+      <p style="margin-top: 20px; font-size: 1.0625rem; max-width: 600px; margin-left: auto; margin-right: auto;">
+        Les prompts exacts que j'utilise chaque matin. Copie-les, configure tes Scheduled Tasks, et recupere 45 min par jour.
+      </p>
+      <div class="stats fade-in">
+        <div class="stat">
+          <div class="stat-number">45 min</div>
+          <div class="stat-label">recuperees / jour</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number">30+</div>
+          <div class="stat-label">newsletters triees / semaine</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number">2h</div>
+          <div class="stat-label">de veille YouTube / semaine</div>
+        </div>
+      </div>
+      <div class="scroll-nudge">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===================== SECTION 2 — PROMPT 1 ===================== -->
+  <section>
+    <div class="container">
+      <div class="fade-in">
+        <span class="badge badge-purple">Daily 7h00</span>
+        <p class="section-num">Prompt 1</p>
+        <h2>Assistant de productivite</h2>
+      </div>
+
+      <div class="problem fade-in">
+        <p>Mon Todoist est un bordel. 20 taches, des priorites assignees sous l'emotion, aucune structure. Je perds 45 min chaque matin a decider quoi faire au lieu de faire.</p>
+      </div>
+
+      <div class="prompt-block fade-in">
+        <pre><code id="prompt-1"># Role
+Tu es mon directeur de productivite. Pas un assistant qui met des taches dans des cases &#x2014; un stratege qui challenge mes priorites, elimine le superflu, et structure ma matinee pour un impact maximum.
+
+# Contexte
+Je suis solopreneur. Mon business = L'Atelier de l'Automatisation. Je travaille de 8h a 12h &#x2014; c'est ma SEULE fenetre de travail productif. 4 heures. Pas une de plus.
+
+Mon Todoist est un bordel : une longue liste de taches classees par priorite (P1 a P4), sans projets, sans labels. Juste des taches et des niveaux de priorite.
+
+# La question centrale
+Pour CHAQUE tache que tu lis dans Todoist, pose-toi cette question :
+**&quot;Est-ce que cette tache me rapporte de l'argent ?&quot;**
+
+- OUI directement (livrable client, facturation, prospection, closing) &#x2192; priorite maximale
+- OUI indirectement (contenu YouTube qui genere des leads, outil qui accelere la livraison) &#x2192; haute priorite
+- NON mais necessaire (admin, compta, obligations legales) &#x2192; shallow work, bloc 3
+- NON et pas necessaire &#x2192; reporter ou supprimer. Sois brutal.
+
+# Jugement des priorites
+Tu ne fais PAS confiance aveuglement aux priorites Todoist. Je les assigne souvent a chaud, sous l'emotion ou l'urgence per&#xe7;ue.
+
+Remets en question les priorites quand :
+- Une tache est P1 mais ne genere aucun revenu et n'est pas une obligation legale &#x2192; flagge-la, suggere un downgrade
+- Une tache est P3/P4 mais a un impact revenu direct (ex: &quot;envoyer la facture a X&quot;) &#x2192; flagge-la, suggere un upgrade
+- Une tache est vague (&quot;avancer sur le projet&quot;) &#x2192; reformule-la avec un livrable concret et mesurable
+- Une tache est dans Todoist depuis plus de 2 semaines &#x2192; elle n'est probablement pas importante. Suggere de la supprimer.
+
+Ecris tes contestations dans la section &quot;Jugement&quot; du planning.
+
+# Architecture des blocs (science-based)
+
+Principes :
+- Le cerveau tient 75-120 min de concentration intense (Ericsson, Kleitman). Pas 90 min dogmatique.
+- Le context switching coute -40% de productivite (Meyer 2001). Donc UN sujet par bloc, pas trois.
+- MIT d'abord : la tache la plus exigeante a 8h quand le cortisol et l'energie sont au pic.
+- Maximum 4h de deep work par jour (Ericsson 1993). Apres, c'est du rendement decroissant.
+
+Structure :
+- Bloc 1 (8h00 - 9h30) : Deep work &#x2014; LA tache qui rapporte le plus d'argent aujourd'hui.
+- Pause (9h30 - 9h40) : 10 min sacrees. Zero ecran.
+- Bloc 2 (9h40 - 11h10) : Deep work &#x2014; deuxieme tache a impact revenu.
+- Pause (11h10 - 11h20) : 10 min sacrees. Zero ecran.
+- Bloc 3 (11h20 - 12h00) : Shallow work batche &#x2014; petites taches regroupees (&lt;15 min chacune).
+
+Si toutes les taches du jour sont des petites taches, regroupe-les sans forcer un deep work artificiel.
+
+# Execution
+
+1. Ouvre Todoist. Lis TOUTES les taches actives.
+2. Applique le filtre &quot;Est-ce que &#xe7;a rapporte de l'argent ?&quot; a chaque tache.
+3. Challenge les priorites. Note tes contestations.
+4. Selectionne les taches qui rentrent dans 4h &#x2014; sois realiste. Mieux vaut 3h30 et finir en avance que 5h et echouer.
+5. Si une tache prend plus de 90 min, decoupe-la en sous-taches avec des livrables clairs.
+6. Place les taches dans les 3 blocs.
+7. Cree les evenements dans Google Calendar &quot;Cowork&quot; :
+   - Un evenement par bloc (nom + objectif).
+   - Supprime d'abord les evenements existants du jour dans ce calendrier (c'est un calendrier dedie).
+8. Sauvegarde le planning dans ~/Desktop/Planning/planning-YYYY-MM-DD.md (cree le dossier si necessaire).
+
+# Format du planning markdown
+
+# Planning &#x2014; [Jour] [Date]
+
+## Verdict
+- Taches revenue-critical aujourd'hui : [X]
+- Taches reportees : [X]
+- Charge estimee : [X]h / 4h
+
+## Jugement
+[Liste des contestations de priorites. Pour chaque tache contestee :]
+- &quot;[Nom tache]&quot; est P[X] mais [raison de la contestation]. Suggestion : [upgrade/downgrade/supprimer/reformuler].
+
+## Blocs
+
+### Bloc 1 &#x2014; 8h00-9h30 &#x2014; [Nom tache]
+**Priorite Todoist** : P[X] | **Priorite reelle** : [revenue-critical / high-impact / necessaire]
+**Impact revenu** : [direct / indirect / aucun &#x2014; et pourquoi]
+**Objectif** : [livrable concret a la fin du bloc]
+
+### Bloc 2 &#x2014; 9h40-11h10 &#x2014; [Nom tache]
+**Priorite Todoist** : P[X] | **Priorite reelle** : [revenue-critical / high-impact / necessaire]
+**Impact revenu** : [direct / indirect / aucun &#x2014; et pourquoi]
+**Objectif** : [livrable concret a la fin du bloc]
+
+### Bloc 3 &#x2014; 11h20-12h00 &#x2014; Shallow work
+- [ ] [Tache 1] (~X min) | Impact : [revenu/admin/obligation]
+- [ ] [Tache 2] (~X min) | Impact : [revenu/admin/obligation]
+- [ ] [Tache 3] (~X min) | Impact : [revenu/admin/obligation]
+
+## Reporte
+- [Tache] (P[X]) &#x2014; [pourquoi reporte + suggestion : a reprogrammer / a supprimer]
+
+# Regles absolues
+- JAMAIS plus de 4h. La compression, pas le remplissage.
+- JAMAIS de tache sans livrable concret.
+- Reporter sans culpabilite. 3 taches terminees &gt; 7 commencees.
+- Les pauses de 10 min sont sacrees.
+- Si aucune tache ne rapporte d'argent aujourd'hui, dis-le clairement. C'est un probleme.
+
+# Auto-amelioration
+Apres chaque execution, analyse :
+- Les estimations de duree etaient-elles realistes ?
+- Des patterns emergent ? (taches sous-estimees, jours plus charges, taches qui trainent)
+- Les contestations de priorite des jours precedents etaient-elles justifiees ?
+Si tu identifies un pattern recurrent, propose une modification de ce prompt dans une section &quot;## Evolution du prompt&quot; en fin de fichier.</code></pre>
+      </div>
+
+      <button class="btn-copy fade-in" data-target="prompt-1" aria-label="Copier le prompt productivite">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+        Copier le prompt
+      </button>
+
+      <div class="why-grid fade-in">
+        <div class="why-block">
+          <h4>Filtre revenu</h4>
+          <p>Chaque tache passe le test : &laquo; est-ce que ca rapporte de l'argent ? &raquo;. Le reste est reporte ou supprime.</p>
+        </div>
+        <div class="why-block">
+          <h4>Jugement des priorites</h4>
+          <p>Claude conteste tes P1 emotionnelles et upgrade tes P4 revenue-critical. Pas un yes-man.</p>
+        </div>
+        <div class="why-block">
+          <h4>Blocs science-based</h4>
+          <p>3 blocs de deep/shallow work cales sur les pics de cortisol et la recherche d'Ericsson (75-120 min).</p>
+        </div>
+        <div class="why-block">
+          <h4>Auto-amelioration</h4>
+          <p>Le prompt s'analyse lui-meme apres chaque execution et propose des evolutions. Il s'ameliore tout seul.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===================== SECTION 3 — PROMPT 2 ===================== -->
+  <section>
+    <div class="container">
+      <div class="fade-in">
+        <span class="badge badge-purple">Daily 7h15</span>
+        <p class="section-num">Prompt 2</p>
+        <h2>Tri des newsletters</h2>
+      </div>
+
+      <div class="problem fade-in">
+        <p>30+ newsletters par semaine dans ma boite Gmail. Je ne les lis jamais. Celles qui valent le coup finissent noyees dans le bruit.</p>
+      </div>
+
+      <div class="prompt-block fade-in">
+        <pre><code id="prompt-2"># Role
+Tu es mon assistant de veille informationnelle.
+
+# Mission
+Chaque matin, scanne ma boite Gmail, identifie les newsletters, categorise-les, envoie celles qui valent le coup dans mon reader (Readwise), et nettoie l'inbox.
+
+# Etapes
+
+1. Ouvre Gmail. Cherche les emails non lus re&#xe7;us depuis hier.
+
+2. Identifie les newsletters :
+   - Newsletter = email contenant &quot;se desabonner&quot; / &quot;unsubscribe&quot; ET contenu editorial (article, analyse, actualite, tips).
+   - PAS des newsletters : notifications transactionnelles, confirmations de commande, alertes de securite, emails personnels, support, promotions pures sans contenu editorial.
+
+3. Pour CHAQUE newsletter, extrais :
+   - Expediteur / nom de la newsletter
+   - Sujet de l'email
+   - 3 points cles maximum (une phrase par point)
+   - 1 verdict :
+     - **A LIRE** : contenu vraiment pertinent, actionnable, ou qui change ma comprehension d'un sujet
+     - **NOTE** : info utile mais pas urgente, pas besoin de lire en detail
+     - **SKIP** : rien d'actionnable, creux, ou hors sujet
+
+4. Pour chaque newsletter categorisee **A LIRE** :
+   - Transfere l'email ORIGINAL EN ENTIER a : add@readwise.io
+     (&#x26A0;&#xFE0F; Remplacez add@readwise.io par VOTRE adresse Readwise personnelle &#x2014; voir Readwise &gt; Settings &gt; Email)
+   - Ne resume pas, ne reformate pas. C'est le mail complet qui doit arriver dans Readwise.
+
+5. Compose UN email recapitulatif avec les resumes de TOUTES les newsletters (A LIRE + NOTE + SKIP).
+   - Envoie-le a : add@readwise.io
+     (&#x26A0;&#xFE0F; Meme adresse Readwise personnelle qu'a l'etape 4)
+   - Objet : &quot;Veille &#x2014; [date du jour]&quot;
+
+6. APRES confirmation de tous les envois (et uniquement apres) :
+   - Archive TOUTES les newsletters originales dans Gmail.
+   - L'objectif est une inbox la plus vide possible.
+   - Ne supprime rien &#x2014; archive uniquement.
+
+# Format de l'email recapitulatif
+
+Veille &#x2014; [date]
+[X] newsletters traitees | [Y] transferees dans Reader
+
+---
+
+[Nom de la newsletter]
+Sujet : [objet du mail]
+&#x2022; [Point cle 1]
+&#x2022; [Point cle 2]
+&#x2022; [Point cle 3]
+&#x2192; Verdict : A LIRE &#x2713; (transferee dans Reader)
+
+---
+
+[Nom de la newsletter]
+Sujet : [objet du mail]
+&#x2022; [Point cle 1]
+&#x2022; [Point cle 2]
+&#x2022; [Point cle 3]
+&#x2192; Verdict : NOTE
+
+---
+
+[Nom de la newsletter]
+Sujet : [objet du mail]
+&#x2022; [Point cle 1]
+&#x2192; Verdict : SKIP
+
+---
+
+Fin de veille. [Y] newsletters transferees. [X] originaux archives.
+
+# Regles
+- Tu ne touches a AUCUN email qui n'est pas une newsletter.
+- Si aucune newsletter aujourd'hui : n'envoie rien. Termine la tache.
+- Ne supprime jamais un email. Archive uniquement.
+- Les points cles sont factuels et concis. Zero reformulation verbeuse.
+- Le verdict est honnete. Newsletter creuse = SKIP.
+- L'ordre est sacre : transferer les &quot;A LIRE&quot; &#x2192; envoyer le recap &#x2192; archiver. Jamais archiver avant d'avoir envoye.</code></pre>
+      </div>
+
+      <button class="btn-copy fade-in" data-target="prompt-2" aria-label="Copier le prompt newsletters">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+        Copier le prompt
+      </button>
+
+      <div class="why-grid fade-in">
+        <div class="why-block">
+          <h4>Tri intelligent</h4>
+          <p>3 verdicts : A LIRE, NOTE, SKIP. Seul le contenu actionnable est transfere dans Readwise Reader.</p>
+        </div>
+        <div class="why-block">
+          <h4>Zero perte</h4>
+          <p>Les newsletters A LIRE sont transferees en entier dans Readwise. Le recap consolide tout en un seul email.</p>
+        </div>
+        <div class="why-block">
+          <h4>Inbox propre</h4>
+          <p>Toutes les newsletters sont archivees apres traitement. L'inbox ne contient plus que les vrais emails.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===================== SECTION 4 — PROMPT 3 ===================== -->
+  <section>
+    <div class="container">
+      <div class="fade-in">
+        <span class="badge badge-purple">Weekly Lundi 6h00</span>
+        <p class="section-num">Prompt 3</p>
+        <h2>Veille concurrentielle YouTube</h2>
+      </div>
+
+      <div class="problem fade-in">
+        <p>20 chaines YouTube a surveiller. 2h de veille manuelle chaque semaine pour un resultat mediocre et des angles de video que je vole sans methode.</p>
+      </div>
+
+      <div class="prompt-block fade-in">
+        <pre><code id="prompt-3"># Role
+Tu es mon analyste de veille YouTube.
+
+# Mission
+Chaque lundi, analyse les videos recentes de mes concurrents et genere un dashboard HTML avec les sujets qui marchent et des recommandations d'angles pour ma chaine.
+
+# Etapes
+
+1. Lis la liste des chaines YouTube dans ~/Desktop/Veille-YouTube/chaines.txt (une chaine par ligne : nom ou URL).
+2. Pour chaque chaine, va sur YouTube et collecte les videos publiees dans les 7 derniers jours :
+   - Titre exact
+   - Nombre de vues
+   - Date de publication
+   - Duree de la video
+3. Analyse les donnees collectees :
+   - Classe les videos par nombre de vues (top performers)
+   - Identifie les sujets recurrents cette semaine (plusieurs chaines parlent du meme sujet)
+   - Repere les formats qui performent (duree, style de titre, type de contenu)
+   - Detecte les opportunites : sujets qui marchent en anglais mais absents en fran&#xe7;ais
+4. Genere un dashboard HTML et sauvegarde-le dans :
+   ~/Desktop/Veille-YouTube/veille-YYYY-MM-DD.html
+   (cree le dossier si necessaire)
+
+# Structure du dashboard HTML
+
+Le fichier doit etre 100% autonome (un seul fichier, CSS inline, zero dependance externe). Design : fond sombre (#1a1a2e), texte clair, typo sans-serif, sections bien separees avec bordures subtiles.
+
+## Sections obligatoires :
+
+### 1. Header
+- Titre : &quot;Veille YouTube &#x2014; Semaine du [date]&quot;
+- Stats : nombre de chaines analysees, nombre total de videos, moyenne de vues
+
+### 2. Top 10 videos de la semaine
+- Tableau trie par vues decroissantes
+- Colonnes : Rang, Titre (lien cliquable vers la video), Chaine, Vues, Duree, Date
+- Mise en evidence visuelle du top 3
+
+### 3. Sujets tendances
+- Regroupement par thematique des sujets abordes cette semaine
+- Pour chaque thematique : nombre de videos, vues cumulees, chaines concernees
+
+### 4. Opportunites
+- Sujets qui performent mais que personne ne couvre en fran&#xe7;ais
+- Pour chaque opportunite : le sujet, les videos sources (avec liens), pourquoi c'est une opportunite
+
+### 5. Recommandations
+- 3 idees de videos concretes basees sur l'analyse
+- Pour chaque idee : titre suggere, angle, justification (donnees a l'appui)
+
+# Regles
+- Aucune donnee inventee. Si une chaine n'a rien publie cette semaine, mentionne-le.
+- Tous les liens vers les videos doivent etre cliquables et fonctionnels.
+- Le dashboard doit etre lisible sans scroll horizontal sur un ecran 1920x1080.
+- Si le fichier chaines.txt n'existe pas ou est vide, cree un fichier d'exemple et termine avec un message d'erreur clair.</code></pre>
+      </div>
+
+      <button class="btn-copy fade-in" data-target="prompt-3" aria-label="Copier le prompt veille YouTube">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+        Copier le prompt
+      </button>
+
+      <div class="why-grid fade-in">
+        <div class="why-block">
+          <h4>20 chaines en 1 clic</h4>
+          <p>FR + EN, automation, AI, no-code. La veille couvre tout l'ecosysteme, pas juste les 3 chaines que tu suis.</p>
+        </div>
+        <div class="why-block">
+          <h4>Dashboard HTML autonome</h4>
+          <p>Un fichier unique, fond sombre, liens cliquables. Zero dependance, ouvrable dans n'importe quel navigateur.</p>
+        </div>
+        <div class="why-block">
+          <h4>Angles actionables</h4>
+          <p>3 recommandations de videos avec titre, angle et justification data-driven. Pas du pifometre.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===================== SECTION 5 — CHECKLIST CONFIG ===================== -->
+  <section>
+    <div class="container">
+      <div class="fade-in">
+        <p class="section-num">Configuration</p>
+        <h2>Comment mettre ca en place</h2>
+        <p style="margin-bottom: 32px;">5 etapes, 30 minutes, et ca tourne tout seul demain matin.</p>
+      </div>
+
+      <div class="warning-box fade-in">
+        <span class="warning-icon" aria-hidden="true">&#x26A0;&#xFE0F;</span>
+        <div>
+          <p><strong>Pre-requis :</strong> Claude Desktop derniere version avec Cowork + Scheduled Tasks actifs. Mac ou PC allume pendant la nuit (pas en veille).</p>
+        </div>
+      </div>
+
+      <div class="timeline fade-in">
+        <div class="timeline-step">
+          <div class="timeline-dot">1</div>
+          <h4>Preparer les dossiers</h4>
+          <p>Creer <code style="background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px; font-size: 0.8125rem;">~/Desktop/Planning/</code> et <code style="background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px; font-size: 0.8125rem;">~/Desktop/Veille-YouTube/</code>. Copier le fichier <code style="background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px; font-size: 0.8125rem;">chaines.txt</code> dans le dossier Veille.</p>
+        </div>
+        <div class="timeline-step">
+          <div class="timeline-dot">2</div>
+          <h4>Connecter les comptes</h4>
+          <p>Todoist + Gmail + Google Calendar dans Claude Desktop. Verifier ton adresse Readwise personnelle dans les settings Readwise.</p>
+        </div>
+        <div class="timeline-step">
+          <div class="timeline-dot">3</div>
+          <h4>Creer le calendrier &laquo; Cowork &raquo;</h4>
+          <p>Google Calendar &gt; + &gt; Creer un agenda &gt; Nom : &laquo; Cowork &raquo;. Calendrier dedie aux blocs de travail generes par le prompt.</p>
+        </div>
+        <div class="timeline-step">
+          <div class="timeline-dot">4</div>
+          <h4>Creer les 3 Scheduled Tasks</h4>
+          <p>Claude Desktop &gt; Cowork &gt; Scheduled. Copier chaque prompt ci-dessus dans sa task. Cliquer &laquo; Run now &raquo; pour tester.</p>
+        </div>
+        <div class="timeline-step">
+          <div class="timeline-dot">5</div>
+          <h4>Laisser tourner</h4>
+          <p>Desactiver la mise en veille, brancher le chargeur. Les 3 tasks tourneront automatiquement cette nuit. Resultats prets demain matin.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===================== SECTION 6 — TIPS ===================== -->
+  <section>
+    <div class="container">
+      <div class="fade-in">
+        <p class="section-num">Conseils</p>
+        <h2>4 tips pour que ca marche vraiment</h2>
+      </div>
+
+      <div class="tips-grid fade-in">
+        <div class="tip-card">
+          <div class="tip-icon" aria-hidden="true">&#x1F4BB;</div>
+          <h4>Mac allume, pas en veille</h4>
+          <p>Les Scheduled Tasks ne se lancent que si Claude Desktop tourne. Desactive la mise en veille ou utilise une app comme Amphetamine.</p>
+        </div>
+        <div class="tip-card">
+          <div class="tip-icon" aria-hidden="true">&#x1F3AF;</div>
+          <h4>Taches precises dans Todoist</h4>
+          <p>Le prompt fonctionne mieux avec des taches concretes. &laquo; Avancer sur le projet &raquo; &#x2192; &laquo; Ecrire le script de la video X &raquo;.</p>
+        </div>
+        <div class="tip-card">
+          <div class="tip-icon" aria-hidden="true">&#x1F4CA;</div>
+          <h4>Donnees partielles = OK</h4>
+          <p>Si Todoist est vide ou si aucune newsletter n'est arrivee, les prompts gerent le cas. Pas de crash, juste un message clair.</p>
+        </div>
+        <div class="tip-card">
+          <div class="tip-icon" aria-hidden="true">&#x1F504;</div>
+          <h4>Auto-amelioration</h4>
+          <p>Le prompt 1 analyse ses propres performances et propose des evolutions. Laisse-le tourner une semaine, puis lis ses suggestions.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===================== SECTION 7 — CTA FINAL ===================== -->
+  <section style="padding-bottom: 40px;">
+    <div class="container text-center">
+      <div class="fade-in" style="max-width: 640px; margin: 0 auto;">
+        <div style="border: 2px solid rgba(157, 79, 158, 0.3); border-radius: 20px; padding: 48px 32px; background: rgba(157, 79, 158, 0.04);">
+          <p style="font-size: 1.5rem; font-weight: 700; color: #fff; line-height: 1.4; margin-bottom: 8px;">
+            Si 3 prompts te font gagner <span class="text-purple">45 min par jour</span>...
+          </p>
+          <p style="font-size: 1.125rem; color: var(--warm-gray); margin-bottom: 32px;">
+            imagine ce qu'on peut automatiser sur l'ensemble de ton business.
+          </p>
+          <a
+            href="https://calendly.com/atelier-automatisation/decouverte"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn-cta"
+          >
+            Reserver un appel de 15 min
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+          </a>
+          <p style="font-size: 0.75rem; color: rgba(213, 215, 218, 0.4); margin-top: 16px;">Gratuit. Sans engagement. On regarde ensemble ce qu'on peut automatiser chez toi.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <p>L'Atelier Automatisation</p>
+      <p style="margin-top: 4px;">On automatise les taches repetitives des solopreneurs et PME.</p>
+    </div>
+  </footer>
+
+  <!-- ===================== JAVASCRIPT ===================== -->
+  <script>
+    // IntersectionObserver for fade-in
+    if ('IntersectionObserver' in window) {
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1 });
+      document.querySelectorAll('.fade-in').forEach(function(el) {
+        observer.observe(el);
+      });
+    } else {
+      document.querySelectorAll('.fade-in').forEach(function(el) {
+        el.classList.add('visible');
+      });
+    }
+
+    // Copy-to-clipboard
+    document.querySelectorAll('.btn-copy').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var targetId = btn.getAttribute('data-target');
+        var codeEl = document.getElementById(targetId);
+        if (!codeEl) return;
+
+        var text = codeEl.textContent;
+        navigator.clipboard.writeText(text).then(function() {
+          var originalHTML = btn.innerHTML;
+          btn.classList.add('copied');
+          btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Copie !';
+          setTimeout(function() {
+            btn.innerHTML = originalHTML;
+            btn.classList.remove('copied');
+          }, 2000);
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>
