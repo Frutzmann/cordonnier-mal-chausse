@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fiche Tendance / Evergreen — Template</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #011638;
+    --violet: #9D4F9E;
+    --blanc: #EEF0F2;
+    --red: #E63946;
+    --green: #2EC4B6;
+    --gold: #F4A261;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--navy);
+    color: var(--blanc);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    padding: 40px 24px;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .header h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 32px;
+    letter-spacing: -1px;
+  }
+
+  .header h1 span { color: var(--green); }
+
+  .header p {
+    margin-top: 8px;
+    font-size: 13px;
+    opacity: 0.4;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .type-toggle {
+    display: flex;
+    max-width: 680px;
+    margin: 0 auto 24px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid rgba(238,240,242,0.1);
+  }
+
+  .toggle-btn {
+    flex: 1;
+    padding: 12px;
+    text-align: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    background: rgba(238,240,242,0.04);
+    color: rgba(238,240,242,0.4);
+    border: none;
+    transition: all 0.2s;
+  }
+
+  .toggle-btn.active-tendance {
+    background: rgba(46,196,182,0.15);
+    color: var(--green);
+  }
+
+  .toggle-btn.active-evergreen {
+    background: rgba(244,162,97,0.15);
+    color: var(--gold);
+  }
+
+  .fiche {
+    max-width: 680px;
+    margin: 0 auto 32px;
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .fiche.tendance { border: 1px solid rgba(46,196,182,0.3); }
+  .fiche.evergreen { border: 1px solid rgba(244,162,97,0.3); }
+
+  .fiche-header {
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(238,240,242,0.06);
+  }
+
+  .tendance .fiche-header { background: rgba(46,196,182,0.1); }
+  .evergreen .fiche-header { background: rgba(244,162,97,0.1); }
+
+  .fiche-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .tendance .fiche-num { color: var(--green); }
+  .evergreen .fiche-num { color: var(--gold); }
+
+  .fiche-title-input {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    background: none;
+    border: none;
+    color: var(--blanc);
+    outline: none;
+    width: 300px;
+    text-align: right;
+    opacity: 0.5;
+  }
+
+  .fiche-title-input::placeholder { color: var(--blanc); opacity: 0.4; }
+  .fiche-title-input:focus { opacity: 1; border-bottom: 1px solid var(--green); }
+
+  .phase {
+    border-bottom: 1px solid rgba(238,240,242,0.06);
+  }
+
+  .phase:last-child { border-bottom: none; }
+
+  .phase-header {
+    padding: 14px 24px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .phase-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 500;
+  }
+
+  .tag-avant { background: rgba(157,79,158,0.2); color: #d49ed5; }
+  .tag-pendant { background: rgba(46,196,182,0.2); color: var(--green); }
+  .tag-apres { background: rgba(244,162,97,0.2); color: var(--gold); }
+
+  .phase-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    opacity: 0.7;
+  }
+
+  .phase-timer {
+    margin-left: auto;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    opacity: 0.35;
+  }
+
+  .fields {
+    padding: 12px 24px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .field {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 12px;
+    align-items: start;
+  }
+
+  .field-label {
+    padding-top: 6px;
+  }
+
+  .field-name {
+    font-size: 12px;
+    font-weight: 500;
+    opacity: 0.8;
+  }
+
+  .field-hint {
+    font-size: 10px;
+    opacity: 0.35;
+    line-height: 1.4;
+    margin-top: 2px;
+  }
+
+  textarea {
+    width: 100%;
+    background: rgba(238,240,242,0.04);
+    border: 1px solid rgba(238,240,242,0.08);
+    border-radius: 8px;
+    outline: none;
+    color: var(--blanc);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    line-height: 1.7;
+    resize: none;
+    padding: 8px 12px;
+    transition: border-color 0.2s;
+  }
+
+  textarea:focus { border-color: rgba(46,196,182,0.4); }
+  .evergreen textarea:focus { border-color: rgba(244,162,97,0.4); }
+
+  textarea::placeholder { color: var(--blanc); opacity: 0.2; font-style: italic; }
+
+  .keywords-box {
+    background: rgba(238,240,242,0.03);
+    border: 1px dashed rgba(238,240,242,0.15);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin: 0 24px 16px;
+  }
+
+  .keywords-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    opacity: 0.4;
+    margin-bottom: 8px;
+  }
+
+  .keywords-input {
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--blanc);
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    width: 100%;
+    letter-spacing: 2px;
+  }
+
+  .keywords-input::placeholder { opacity: 0.2; font-style: italic; font-family: 'DM Sans', sans-serif; letter-spacing: 0; font-size: 12px; }
+
+  .fiche-footer {
+    background: rgba(238,240,242,0.02);
+    border-top: 1px solid rgba(238,240,242,0.06);
+    padding: 14px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .timer {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    opacity: 0.4;
+  }
+
+  .btn-new {
+    border: none;
+    border-radius: 8px;
+    padding: 8px 18px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: opacity 0.2s;
+    color: var(--navy);
+  }
+
+  .tendance .btn-new { background: var(--green); }
+  .evergreen .btn-new { background: var(--gold); }
+  .btn-new:hover { opacity: 0.8; }
+
+  .hook-reminder {
+    max-width: 680px;
+    margin: 0 auto;
+    background: rgba(230,57,70,0.08);
+    border: 1px solid rgba(230,57,70,0.2);
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+
+  .hook-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+
+  .hook-text h3 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    color: #f08088;
+    margin-bottom: 4px;
+  }
+
+  .hook-text p {
+    font-size: 12px;
+    opacity: 0.5;
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Fiche <span>Tendance / Evergreen</span></h1>
+  <p>45 min de test · Notes pendant · Tu tournes</p>
+</div>
+
+<div class="type-toggle">
+  <button class="toggle-btn active-tendance" onclick="setType('tendance')">⚡ Tendance Tech</button>
+  <button class="toggle-btn" onclick="setType('evergreen')">🌿 Evergreen</button>
+</div>
+
+<div class="fiche tendance" id="fiche">
+  <div class="fiche-header">
+    <span class="fiche-num" id="type-label">Tendance #<span id="num">01</span></span>
+    <input class="fiche-title-input" type="text" placeholder="Outil / Sujet..." />
+  </div>
+
+  <!-- AVANT -->
+  <div class="phase">
+    <div class="phase-header">
+      <span class="phase-tag tag-avant">Avant</span>
+      <span class="phase-title">Validation du sujet</span>
+      <span class="phase-timer">5 min</span>
+    </div>
+    <div class="fields">
+      <div class="field">
+        <div class="field-label">
+          <div class="field-name">Référence US</div>
+          <div class="field-hint">Lien de la vidéo qui cartonne</div>
+        </div>
+        <textarea rows="1" placeholder="https://..."></textarea>
+      </div>
+      <div class="field">
+        <div class="field-label">
+          <div class="field-name">Pool FR validé ?</div>
+          <div class="field-hint">Des gens cherchent ce sujet en FR ?</div>
+        </div>
+        <textarea rows="1" placeholder="Oui / Non — preuve rapide..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- PENDANT -->
+  <div class="phase">
+    <div class="phase-header">
+      <span class="phase-tag tag-pendant">Pendant le test</span>
+      <span class="phase-title">Ce que je note en découvrant l'outil</span>
+      <span class="phase-timer">45 min chrono</span>
+    </div>
+    <div class="fields">
+      <div class="field">
+        <div class="field-label">
+          <div class="field-name">Le truc qui m'a bluffé</div>
+          <div class="field-hint">La surprise. C'est ton hook.</div>
+        </div>
+        <textarea rows="2" placeholder="Le moment où j'ai dit 'putain'..."></textarea>
+      </div>
+      <div class="field">
+        <div class="field-label">
+          <div class="field-name">Ce qui a merdé</div>
+          <div class="field-hint">Friction, limites, bugs. Ça rend la démo humaine.</div>
+        </div>
+        <textarea rows="2" placeholder="Ce que j'ai galéré à faire..."></textarea>
+      </div>
+      <div class="field">
+        <div class="field-label">
+          <div class="field-name">Ce qui a marché</div>
+          <div class="field-hint">Le résultat concret obtenu.</div>
+        </div>
+        <textarea rows="2" placeholder="Ce que j'ai réussi à faire..."></textarea>
+      </div>
+    </div>
+
+    <div class="keywords-box">
+      <div class="keywords-label">Post-it caméra — mots clés à garder sous les yeux</div>
+      <input class="keywords-input" type="text" placeholder="MCP · context window · tool call · ..."/>
+    </div>
+  </div>
+
+  <!-- APRÈS -->
+  <div class="phase">
+    <div class="phase-header">
+      <span class="phase-tag tag-apres">Après</span>
+      <span class="phase-title">Avant d'allumer la caméra</span>
+      <span class="phase-timer">5 min</span>
+    </div>
+    <div class="fields">
+      <div class="field">
+        <div class="field-label">
+          <div class="field-name">Ma première phrase</div>
+          <div class="field-hint">Celle que je dirais à ma copine pour l'accrocher.</div>
+        </div>
+        <textarea rows="2" placeholder="'J'ai testé X et j'ai pas cru ce que j'ai vu...'"></textarea>
+      </div>
+      <div class="field">
+        <div class="field-label">
+          <div class="field-name">Ce que ça change concrètement</div>
+          <div class="field-hint">Le reward de fin. Une phrase.</div>
+        </div>
+        <textarea rows="2" placeholder="Ce que ça permet de faire que c'était impossible avant..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="fiche-footer">
+    <span class="timer">⏱ Test 45 min · Prep 10 min · Tournage 20 min</span>
+    <button class="btn-new" onclick="newFiche()">+ Nouvelle fiche</button>
+  </div>
+</div>
+
+<br>
+
+<div class="hook-reminder">
+  <div class="hook-icon">⚡</div>
+  <div class="hook-text">
+    <h3>Rappel Hook</h3>
+    <p>Tu tournes le corps en premier — authentique, chronologique. Tu travailles le hook à froid après. Hook = il clique. Authenticité = il reste. Les deux font des jobs différents.</p>
+  </div>
+</div>
+
+<script>
+  let count = 1;
+  let currentType = 'tendance';
+
+  function setType(type) {
+    currentType = type;
+    const fiche = document.getElementById('fiche');
+    const label = document.getElementById('type-label');
+    const btns = document.querySelectorAll('.toggle-btn');
+
+    fiche.className = 'fiche ' + type;
+
+    btns.forEach(b => b.className = 'toggle-btn');
+    btns[type === 'tendance' ? 0 : 1].className = 'toggle-btn active-' + type;
+
+    const prefix = type === 'tendance' ? 'Tendance' : 'Evergreen';
+    label.innerHTML = prefix + ' #<span id="num">' + count.toString().padStart(2, '0') + '</span>';
+  }
+
+  function newFiche() {
+    count++;
+    document.getElementById('num').textContent = count.toString().padStart(2, '0');
+    document.querySelectorAll('textarea').forEach(t => t.value = '');
+    document.querySelector('.fiche-title-input').value = '';
+    document.querySelector('.keywords-input').value = '';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+
+</body>
+</html>

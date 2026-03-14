@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shooting Frameworks V1–V4</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap');
+
+:root {
+  --navy: #011638;
+  --violet: #9D4F9E;
+  --blanc: #EEF0F2;
+  --accent: #f0c040;
+  --v-light: #c47fc5;
+  --red: #ff6b6b;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--navy);
+  color: var(--blanc);
+  font-family: 'Syne', sans-serif;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* NAV */
+nav {
+  position: fixed;
+  top:0; left:0; right:0;
+  height: 50px;
+  background: rgba(1,22,56,0.97);
+  border-bottom: 1px solid rgba(157,79,158,0.25);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 6px;
+  z-index: 100;
+}
+
+.vbtn {
+  padding: 5px 14px;
+  border-radius: 3px;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  cursor: pointer;
+  border: 1px solid rgba(157,79,158,0.3);
+  background: transparent;
+  color: rgba(238,240,242,0.45);
+  transition: all 0.18s;
+  letter-spacing: 0.04em;
+}
+.vbtn:hover { color: var(--blanc); border-color: var(--violet); }
+.vbtn.on { background: var(--violet); border-color: var(--violet); color: #fff; }
+
+.sep { width:1px; height:18px; background: rgba(157,79,158,0.25); margin: 0 2px; }
+
+.ctr {
+  margin-left: auto;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: rgba(238,240,242,0.3);
+  letter-spacing: 0.08em;
+}
+
+.arrs { display:flex; gap:4px; margin-left:14px; }
+.arr {
+  width:26px; height:26px;
+  border: 1px solid rgba(157,79,158,0.35);
+  background: transparent;
+  color: var(--blanc);
+  border-radius: 3px;
+  cursor: pointer;
+  font-size:12px;
+  display:flex; align-items:center; justify-content:center;
+  transition: all 0.15s;
+}
+.arr:hover { background: var(--violet); border-color: var(--violet); }
+
+/* PROGRESS */
+#bar {
+  position: fixed;
+  bottom: 0; left: 0;
+  height: 2px;
+  background: var(--violet);
+  transition: width 0.3s;
+  z-index: 200;
+}
+
+/* SLIDES */
+.wrap {
+  position: fixed;
+  top: 50px; left:0; right:0; bottom:0;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  padding: 52px 72px;
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+}
+.slide.on { display: flex; }
+
+/* BG VARIANTS */
+.bg-title { background: var(--navy); }
+.bg-title::after {
+  content:'';
+  position:absolute;
+  top:-180px; right:-180px;
+  width:520px; height:520px;
+  border-radius:50%;
+  background: radial-gradient(circle, rgba(157,79,158,0.13) 0%, transparent 70%);
+  pointer-events:none;
+}
+.bg-dark { background: linear-gradient(140deg,#020e28 0%,#011638 60%,#0c0219 100%); }
+.bg-plain { background: var(--navy); }
+
+/* ELEMENTS */
+.eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--v-light);
+  text-transform: uppercase;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.eyebrow::before {
+  content:'';
+  display:inline-block;
+  width:20px; height:1px;
+  background: var(--violet);
+}
+
+.tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: rgba(157,79,158,0.65);
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(38px,5.5vw,70px);
+  line-height: 1.08;
+  margin-bottom: 14px;
+}
+h1 em { color: var(--v-light); font-style: italic; }
+
+h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(26px,3.5vw,48px);
+  line-height: 1.15;
+  margin-bottom: 20px;
+}
+h2 em { color: var(--v-light); }
+
+.stats {
+  display: flex;
+  gap: 24px;
+  margin-top: 36px;
+}
+.stat {
+  flex:1;
+  padding: 18px 20px;
+  border: 1px solid rgba(157,79,158,0.22);
+  border-radius: 6px;
+  background: rgba(157,79,158,0.05);
+  text-align: center;
+}
+.stat .val {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(28px,4vw,52px);
+  color: var(--accent);
+  display: block;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.stat .val.red { color: var(--red); }
+.stat .lbl {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: rgba(238,240,242,0.4);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.q {
+  border-left: 3px solid var(--violet);
+  padding: 15px 20px;
+  margin: 10px 0;
+  background: rgba(157,79,158,0.06);
+  border-radius: 0 5px 5px 0;
+}
+.q p {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(17px,2.3vw,24px);
+  line-height: 1.5;
+  font-style: italic;
+  color: var(--blanc);
+}
+.q p strong {
+  color: var(--accent);
+  font-style: normal;
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+}
+.q p em { color: var(--red); font-style: normal; font-family:'Syne',sans-serif; font-weight:700; }
+
+.bullets {
+  list-style: none;
+  margin: 14px 0;
+}
+.bullets li {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 10px;
+  font-size: clamp(15px,2vw,19px);
+  line-height: 1.5;
+  color: rgba(238,240,242,0.82);
+}
+.bullets li::before { content:'▸'; color:var(--v-light); flex-shrink:0; margin-top:2px; }
+
+.two {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+  margin: 10px 0;
+}
+.col {
+  padding: 16px 18px;
+  border: 1px solid rgba(157,79,158,0.18);
+  border-radius: 6px;
+  background: rgba(1,22,56,0.4);
+}
+.col h4 {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--v-light);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.col p { font-size:14px; line-height:1.6; color:rgba(238,240,242,0.72); }
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: rgba(220,50,50,0.12);
+  border: 1px solid rgba(220,50,50,0.35);
+  border-radius: 3px;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--red);
+  letter-spacing: 0.1em;
+  margin-bottom: 12px;
+}
+
+.cta-box {
+  background: linear-gradient(135deg,rgba(157,79,158,0.18) 0%,rgba(157,79,158,0.04) 100%);
+  border: 1px solid rgba(157,79,158,0.35);
+  border-radius: 8px;
+  padding: 20px 24px;
+  margin-top: 16px;
+}
+.cta-box p {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(15px,1.9vw,19px);
+  line-height: 1.55;
+  font-style: italic;
+  color: var(--blanc);
+  margin-bottom: 6px;
+}
+.cta-box p:last-child { margin-bottom:0; }
+
+.corner {
+  position: absolute;
+  bottom: 24px;
+  right: 64px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: rgba(238,240,242,0.15);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.big-num {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(56px,8vw,110px);
+  color: var(--accent);
+  line-height: 1;
+  display: block;
+  margin: 8px 0;
+}
+
+.hint {
+  position: fixed;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: rgba(238,240,242,0.1);
+  letter-spacing: 0.12em;
+  z-index: 100;
+  pointer-events: none;
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <button class="vbtn on" onclick="gv(0)">V1 — Réconciliation</button>
+  <div class="sep"></div>
+  <button class="vbtn" onclick="gv(1)">V2 — Anomalies</button>
+  <div class="sep"></div>
+  <button class="vbtn" onclick="gv(2)">V3 — Sentinelle</button>
+  <div class="sep"></div>
+  <button class="vbtn" onclick="gv(3)">V4 — Dispatch</button>
+  <span class="ctr" id="ctr">1 / 28</span>
+  <div class="arrs">
+    <button class="arr" onclick="prev()">←</button>
+    <button class="arr" onclick="next()">→</button>
+  </div>
+</nav>
+
+<div id="bar"></div>
+<div class="wrap" id="wrap">
+
+<!-- =============================== V1 =============================== -->
+
+<div class="slide bg-title on" data-v="0">
+  <div class="eyebrow">Vidéo 1 — Croyance CH1 · COO</div>
+  <h1>3 fichiers Excel.<br><em>4 secondes.</em><br>Un seul fichier.</h1>
+  <div class="stats">
+    <div class="stat"><span class="val">1h30</span><span class="lbl">À la main</span></div>
+    <div class="stat"><span class="val">4s</span><span class="lbl">Automatisé</span></div>
+    <div class="stat"><span class="val">16</span><span class="lbl">Fonds</span></div>
+  </div>
+  <div class="corner">Framework PAS</div>
+</div>
+
+<div class="slide bg-dark" data-v="0">
+  <div class="tag">Hook — 0:00 → 0:15</div>
+  <div class="q"><p>Cette réconciliation me prendrait <strong>1h30 à 2h</strong>. Je l'ai automatisée en <strong>30 secondes</strong>. 3 fichiers, 1 quatrième. Sans toucher à rien.</p></div>
+  <div class="corner">V1 — HOOK</div>
+</div>
+
+<div class="slide bg-plain" data-v="0">
+  <div class="tag">Histoire — Problem — 0:15 → 1:45</div>
+  <div class="q"><p>Fin de mois. Ton admin externe t'envoie son fichier. En anglais, montants en valeur absolue, dates en format américain. Ta compta sort le sien. Ton fichier interne est dans un troisième format.</p></div>
+  <div class="q" style="margin-top:10px"><p>Quelqu'un ouvre les trois. Crée un quatrième. Cherche chaque fonds par ISIN. Copie. Colle. Compare. <strong>1h30 minimum.</strong> Si les formats sont propres.</p></div>
+  <div class="q" style="margin-top:10px"><p>Ce quelqu'un — c'est souvent <strong>ton analyste le plus qualifié</strong>. Qui pourrait faire autre chose.</p></div>
+  <div class="corner">V1 — PROBLEM</div>
+</div>
+
+<div class="slide bg-plain" data-v="0">
+  <div class="tag">C'est pas de ta faute — Agitate — 1:45 → 2:45</div>
+  <div class="q"><p>Les outils qui font ça existent. Mais ils coûtent entre <strong>80 000 et 200 000€ par an</strong>. Dimensionnés pour des équipes de 200 personnes. Implémentation : <strong>12 à 18 mois</strong>.</p></div>
+  <div class="q" style="margin-top:10px"><p>Donc tu fais comme tout le monde dans une ManCo Tier 2-3. Tu utilises Excel. Et quelqu'un le fait à la main. <strong>Chaque mois. Sans exception.</strong></p></div>
+  <div class="corner">V1 — AGITATE</div>
+</div>
+
+<div class="slide bg-dark" data-v="0">
+  <div class="tag">Démo — Solution — 2:45 → 5:30</div>
+  <div class="two">
+    <div>
+      <div class="q"><p>Trois sources. Formats différents. <strong>Zéro compatibilité native.</strong></p></div>
+      <div class="q" style="margin-top:10px"><p>Un quatrième fichier. Créé automatiquement. Toutes les données alignées sur une seule ligne par fonds.</p></div>
+      <div class="q" style="margin-top:10px"><p>ISIN. Fonds. Fee contractuel. Fee facturé. Fee admin. Ecart. Sévérité.</p></div>
+    </div>
+    <div style="display:flex;flex-direction:column;justify-content:center;">
+      <div class="badge">CRITIQUE</div>
+      <div class="q"><p>PE Feeder. Ecart : <em>-58 333 euros.</em></p></div>
+      <div class="q" style="margin-top:10px"><p>Un avenant signé en septembre. Taux pas mis à jour. <strong>58 000€ facturés en trop. Chaque mois.</strong></p></div>
+      <div class="q" style="margin-top:10px"><p>Détecté en 30 secondes. <strong>Avant l'auditeur.</strong></p></div>
+    </div>
+  </div>
+  <div class="corner">V1 — SOLUTION</div>
+</div>
+
+<div class="slide bg-plain" data-v="0">
+  <div class="tag">Conclusion + CTA — 5:30 → 6:45</div>
+  <div class="q"><p>Ce workflow ne remplace pas ton équipe. Il lui rend <strong>1h30 par mois</strong>. Et il lui donne les bons chiffres — pas ceux qu'elle espère avoir trouvés.</p></div>
+  <div class="q" style="margin-top:10px"><p>Le workflow <strong>s'adapte à tes fichiers</strong>. Pas l'inverse. C'est exactement ce qu'on calibre ensemble lors du diagnostic.</p></div>
+  <div class="cta-box" style="margin-top:20px">
+    <p>Blueprint en description — gratuit</p>
+    <p>Lien Calendly — diagnostic 30 min</p>
+  </div>
+  <div class="corner">V1 — CTA</div>
+</div>
+
+<!-- =============================== V2 =============================== -->
+
+<div class="slide bg-title" data-v="1">
+  <div class="eyebrow">Vidéo 2 — Croyance CO1 · CO</div>
+  <h1>Ce fichier a l'air propre.<br><em>Et pourtant.</em></h1>
+  <div class="stats">
+    <div class="stat"><span class="val red">-58 333€</span><span class="lbl">PE Feeder</span></div>
+    <div class="stat"><span class="val">30s</span><span class="lbl">Détecté</span></div>
+    <div class="stat"><span class="val">3 mois</span><span class="lbl">Non vu</span></div>
+  </div>
+  <div class="corner">Framework PAS</div>
+</div>
+
+<div class="slide bg-dark" data-v="1">
+  <div class="tag">Hook — 0:00 → 0:15</div>
+  <div class="badge">CRITIQUE — PE FEEDER — -58 333€</div>
+  <div class="q"><p>Ce fichier a l'air propre. Et pourtant — là. <em>PE Feeder. -58 333 euros. CRITIQUE.</em> Détecté automatiquement en 30 secondes.</p></div>
+  <div class="corner">V2 — HOOK</div>
+</div>
+
+<div class="slide bg-plain" data-v="1">
+  <div class="tag">Histoire — Problem — 0:15 → 1:45</div>
+  <div class="q"><p>Le problème avec la réconciliation manuelle — c'est pas juste le temps. C'est que même quand tu la fais, <strong>tu peux rater quelque chose.</strong></p></div>
+  <div class="q" style="margin-top:10px"><p>Un écart de 58 000€ sur un fonds à 280 millions — à l'œil, sur une ligne parmi 16, <strong>un vendredi de fin de mois</strong> — tu le vois pas forcément.</p></div>
+  <div class="q" style="margin-top:10px"><p>J'ai vu ça. Un avenant signé. Taux mis à jour côté admin. Pas côté interne. <em>3 mois plus tard — l'auditeur trouve.</em> La conversation est difficile.</p></div>
+  <div class="corner">V2 — PROBLEM</div>
+</div>
+
+<div class="slide bg-plain" data-v="1">
+  <div class="tag">C'est pas de ta faute — Agitate — 1:45 → 2:45</div>
+  <div class="q"><p>16 fonds. 3 fichiers. Des formats hétérogènes. Des noms qui ne correspondent pas. Des ISIN mal formatés — un espace — qui font rater le merge.</p></div>
+  <div class="q" style="margin-top:10px"><p>Calculer les écarts à la main, c'est 16 soustractions. Mais normaliser les données avant — <strong>c'est là que les erreurs arrivent.</strong></p></div>
+  <div class="q" style="margin-top:10px"><p>Donc l'écart reste. Parfois 1 mois. Parfois 3. Jusqu'à ce que quelqu'un le trouve. <strong>Et ce quelqu'un, tu préfères que ce soit toi.</strong></p></div>
+  <div class="corner">V2 — AGITATE</div>
+</div>
+
+<div class="slide bg-dark" data-v="1">
+  <div class="tag">Démo — Solution — 2:45 → 5:30</div>
+  <div class="badge">CRITIQUE — PE FEEDER</div>
+  <div class="two">
+    <div>
+      <div class="q"><p>Fee contractuel. Fee facturé. L'écart calculé automatiquement. Classé par sévérité.</p></div>
+      <div class="q" style="margin-top:10px"><p>Plus de <strong>50 000€</strong> → CRITIQUE<br>10 000–50 000€ → HAUTE<br>1 000–10 000€ → MOYENNE</p></div>
+    </div>
+    <div>
+      <div class="q"><p>Taux F1 : <strong>1,50%</strong> — avenant mis à jour.<br>Fee attendu : <strong>350 000€</strong>.<br>Fee facturé : <em>408 333€</em> — ancien taux.</p></div>
+      <div class="q" style="margin-top:10px"><p>L'admin externe avait le bon taux. La divergence était là depuis le début. <strong>Visible uniquement en croisant les trois sources.</strong></p></div>
+    </div>
+  </div>
+  <div class="corner">V2 — SOLUTION</div>
+</div>
+
+<div class="slide bg-plain" data-v="1">
+  <div class="tag">Conclusion + CTA — 5:30 → 6:45</div>
+  <div class="q"><p>Avant : ton équipe passe 1h30 à réconcilier. Et elle peut encore rater un écart. Après : 30 secondes. <strong>Toutes les anomalies. Classées. Prêtes à vérifier.</strong></p></div>
+  <div class="q" style="margin-top:10px"><p>La différence — c'est pas le temps. C'est que tu <strong>contrôles la situation avant que quelqu'un d'autre la contrôle à ta place.</strong></p></div>
+  <div class="q" style="margin-top:10px"><p>Ton nom est sur la licence. <strong>Tu veux pas espérer. Tu veux le savoir.</strong></p></div>
+  <div class="cta-box">
+    <p>Blueprint en description — gratuit</p>
+    <p>Lien Calendly — diagnostic 30 min</p>
+  </div>
+  <div class="corner">V2 — CTA</div>
+</div>
+
+<!-- =============================== V3 =============================== -->
+
+<div class="slide bg-title" data-v="2">
+  <div class="eyebrow">Vidéo 3 — Croyance CA1 · CO</div>
+  <h1>Chaque matin à 6h00.<br><em>Automatiquement.</em></h1>
+  <div class="stats">
+    <div class="stat"><span class="val">6h00</span><span class="lbl">Email digest</span></div>
+    <div class="stat"><span class="val">5 min</span><span class="lbl">Par jour</span></div>
+    <div class="stat"><span class="val">0</span><span class="lbl">Circulaires ratées</span></div>
+  </div>
+  <div class="corner">Framework PAS</div>
+</div>
+
+<div class="slide bg-dark" data-v="2">
+  <div class="tag">Hook — 0:00 → 0:15</div>
+  <div class="q"><p>Cet email est arrivé ce matin à <strong>6h00</strong>. Automatiquement. Toutes les publications CSSF des 30 derniers jours. Triées par impact. Par rôle. <strong>Sans que j'aie rien fait.</strong></p></div>
+  <div class="corner">V3 — HOOK</div>
+</div>
+
+<div class="slide bg-plain" data-v="2">
+  <div class="tag">Histoire — Problem — 0:15 → 1:45</div>
+  <div class="q"><p>La CSSF publie en continu. Circulaires, FAQ, communications, avertissements, amendes. Certaines te concernent directement. D'autres ton Head of Compliance. D'autres ton COO.</p></div>
+  <div class="q" style="margin-top:10px"><p>Personne dans une ManCo de 20 ou 40 personnes n'a quelqu'un dont le seul job est de lire cssf.lu tous les jours. <strong>Donc parfois tu rates quelque chose.</strong></p></div>
+  <div class="q" style="margin-top:10px"><p>Une circulaire ratée — ce n'est pas juste un oubli. <em>C'est une non-conformité potentielle. Avec ton nom dessus.</em></p></div>
+  <div class="corner">V3 — PROBLEM</div>
+</div>
+
+<div class="slide bg-plain" data-v="2">
+  <div class="tag">C'est pas de ta faute — Agitate — 1:45 → 2:45</div>
+  <div class="q"><p>Les outils de veille réglementaire existent. Entre <strong>20 000 et 100 000€ par an</strong>. Conçus pour des équipes compliance de 10 personnes dans une grande banque.</p></div>
+  <div class="q" style="margin-top:10px"><p>Pour une ManCo Tier 2-3 avec 2 Conducting Officers — <strong>c'est disproportionné.</strong></p></div>
+  <div class="q" style="margin-top:10px"><p>Et la CSSF ne ralentit pas. DORA. AIFMD II. EU AML Package. AI Act. <strong>Chaque année — plus de volume. Moins de temps.</strong></p></div>
+  <div class="corner">V3 — AGITATE</div>
+</div>
+
+<div class="slide bg-dark" data-v="2">
+  <div class="tag">Démo — Solution — 2:45 → 5:30</div>
+  <div class="two">
+    <div>
+      <div class="q"><p><strong>Impact Haute — en rouge.</strong><br>Ce que tu dois lire aujourd'hui.</p></div>
+      <div class="q" style="margin-top:10px"><p><strong>Avertissement Golding.</strong> Usurpation d'identité. Action requise : vérifier les contacts internes. Signalement CSSF si nécessaire.</p></div>
+      <div class="q" style="margin-top:10px"><p><strong>Impact Basse.</strong> Statistiques OPC. Classées automatiquement. Pas à lire ce matin.</p></div>
+    </div>
+    <div style="display:flex;flex-direction:column;justify-content:center;gap:10px;">
+      <div class="q"><p>RSS cssf.lu → téléchargement de chaque publication → résumé, impact, rôles, action requise → email 6h00.</p></div>
+      <div class="q"><p><strong>Les données viennent de cssf.lu. En direct. Ce matin. Pas des données fictives.</strong></p></div>
+    </div>
+  </div>
+  <div class="corner">V3 — SOLUTION</div>
+</div>
+
+<div class="slide bg-plain" data-v="2">
+  <div class="tag">Conclusion + CTA — 5:30 → 6:45</div>
+  <div class="q"><p>Avant : tu fais de la veille quand tu as le temps. C'est-à-dire <strong>rarement.</strong></p></div>
+  <div class="q" style="margin-top:10px"><p>Après : chaque matin à 6h00, un digest trié. 5 minutes. <strong>Tu sais ce qui te concerne aujourd'hui.</strong></p></div>
+  <div class="q" style="margin-top:10px"><p>Tu ne rates plus une circulaire. Pas parce que tu es plus rigoureux. <strong>Parce que le workflow l'est à ta place.</strong></p></div>
+  <div class="cta-box">
+    <p>Blueprint en description — gratuit</p>
+    <p>Lien Calendly — diagnostic 30 min</p>
+  </div>
+  <div class="corner">V3 — CTA</div>
+</div>
+
+<!-- =============================== V4 =============================== -->
+
+<div class="slide bg-title" data-v="3">
+  <div class="eyebrow">Vidéo 4 — Croyance CA1 · COO + Compliance</div>
+  <h1>Un workflow.<br><em>Deux outputs.</em><br>Chaque rôle voit le sien.</h1>
+  <div class="stats">
+    <div class="stat"><span class="val">1</span><span class="lbl">Workflow</span></div>
+    <div class="stat"><span class="val">2</span><span class="lbl">Outputs</span></div>
+    <div class="stat"><span class="val">4</span><span class="lbl">Rôles filtrés</span></div>
+  </div>
+  <div class="corner">Framework PAS</div>
+</div>
+
+<div class="slide bg-dark" data-v="3">
+  <div class="tag">Hook — 0:00 → 0:15</div>
+  <div class="q"><p>Un workflow. Deux outputs. <strong>L'email digest pour toi à 6h00. Le tableau filtrable par rôle pour toute ton équipe.</strong> Sans intervention manuelle.</p></div>
+  <div class="corner">V4 — HOOK</div>
+</div>
+
+<div class="slide bg-plain" data-v="3">
+  <div class="tag">Histoire — Problem — 0:15 → 1:45</div>
+  <div class="q"><p>Le problème avec la veille — c'est pas juste ne pas rater une publication. <strong>C'est savoir qui doit la lire.</strong></p></div>
+  <div class="q" style="margin-top:10px"><p>Une circulaire DORA — CO et Compliance. AIFMD — COO. Avertissement fraude — tout le monde. Statistiques OPC — personne en urgence.</p></div>
+  <div class="q" style="margin-top:10px"><p>Aujourd'hui, qui fait ce tri ? Soit c'est toi — tu perds du temps. Soit personne — <strong>tout le monde reçoit tout, lit rien, et espère.</strong></p></div>
+  <div class="corner">V4 — PROBLEM</div>
+</div>
+
+<div class="slide bg-plain" data-v="3">
+  <div class="tag">C'est pas de ta faute — Agitate — 1:45 → 2:45</div>
+  <div class="q"><p>Ce dispatch intelligent exigerait quelqu'un qui lit chaque publication, comprend son impact, identifie les rôles, envoie le bon résumé à la bonne personne.</p></div>
+  <div class="q" style="margin-top:10px"><p><strong>C'est un travail à plein temps. Que personne n'a.</strong></p></div>
+  <div class="q" style="margin-top:10px"><p>Donc le dispatch se fait à la main, mal, <em>ou pas du tout.</em></p></div>
+  <div class="corner">V4 — AGITATE</div>
+</div>
+
+<div class="slide bg-dark" data-v="3">
+  <div class="tag">Démo — Solution — 2:45 → 5:30</div>
+  <div class="two">
+    <div>
+      <div class="q"><p>Colonne CO — Oui ou Non.<br>Colonne COO. Compliance. MD.<br><strong>Pour chaque publication.</strong></p></div>
+      <div class="q" style="margin-top:10px"><p>Ton CO filtre. Il voit ce qui le concerne. Rien d'autre.</p></div>
+      <div class="q" style="margin-top:10px"><p>Colonne <strong>Action Requise</strong> : pas juste un résumé. Ce qu'il faut faire concrètement.</p></div>
+    </div>
+    <div style="display:flex;flex-direction:column;justify-content:center;gap:10px;">
+      <div class="q"><p>Lien direct cssf.lu pour chaque publication. <strong>Pas une interprétation. La source.</strong></p></div>
+      <div class="q"><p>Email digest pour toi. Tableau pour ton équipe. <strong>Un seul workflow.</strong></p></div>
+      <div class="q"><p>En inspection CSSF — tableau daté, actions requises, rôles notifiés. <em>Traçabilité gratuite.</em></p></div>
+    </div>
+  </div>
+  <div class="corner">V4 — SOLUTION</div>
+</div>
+
+<div class="slide bg-plain" data-v="3">
+  <div class="tag">Conclusion + CTA — 5:30 → 6:45</div>
+  <div class="q"><p>Avant : la veille se fait quand quelqu'un a le temps. Le dispatch se fait mal ou pas du tout.</p></div>
+  <div class="q" style="margin-top:10px"><p>Après : chaque matin — digest pour toi, tableau pour ton équipe. <strong>Chaque rôle voit ce qui le concerne. Rien de plus. Rien de moins.</strong></p></div>
+  <div class="q" style="margin-top:10px"><p>Ce n'est pas de la transformation digitale. <strong>C'est un processus. Automatisé une fois. Qui tourne tous les jours.</strong></p></div>
+  <div class="cta-box">
+    <p>Blueprint en description — gratuit</p>
+    <p>Lien Calendly — diagnostic 30 min</p>
+  </div>
+  <div class="corner">V4 — CTA</div>
+</div>
+
+</div><!-- wrap -->
+
+<div class="hint">← → ou touches fléchées pour naviguer</div>
+
+<script>
+const slides = [...document.querySelectorAll('.slide')];
+const vbtns = [...document.querySelectorAll('.vbtn')];
+let cur = 0;
+
+// video boundaries
+const videos = [0,1,2,3];
+function getVideoSlides(v) {
+  return slides.reduce((acc,s,i) => { if(s.dataset.v == v) acc.push(i); return acc; }, []);
+}
+const vRanges = videos.map(v => getVideoSlides(v));
+
+function show(i) {
+  if(i < 0 || i >= slides.length) return;
+  slides[cur].classList.remove('on');
+  cur = i;
+  slides[cur].classList.add('on');
+  // update counter
+  document.getElementById('ctr').textContent = `${cur+1} / ${slides.length}`;
+  // update progress bar
+  document.getElementById('bar').style.width = `${((cur+1)/slides.length)*100}%`;
+  // update nav btns
+  const v = parseInt(slides[cur].dataset.v);
+  vbtns.forEach((b,j) => b.classList.toggle('on', j === v));
+}
+
+function next() { show(cur+1); }
+function prev() { show(cur-1); }
+
+function gv(v) {
+  const idx = vRanges[v][0];
+  if(idx !== undefined) show(idx);
+}
+
+document.addEventListener('keydown', e => {
+  if(e.key === 'ArrowRight' || e.key === 'ArrowDown') next();
+  if(e.key === 'ArrowLeft' || e.key === 'ArrowUp') prev();
+});
+
+show(0);
+</script>
+</body>
+</html>
